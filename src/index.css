@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* 1. Register Satoshi (Default Body Font) */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 2. Register EB Garamond (New Header Font) - Variable Weight */
+@font-face {
+  font-family: 'EBGaramond';
+  /* This supports weights from 100 to 900 automatically */
+  src: url('/fonts/EBGaramond-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900; 
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 3. Register EB Garamond Italic */
+@font-face {
+  font-family: 'EBGaramond';
+  src: url('/fonts/EBGaramond-Italic-VariableFont_wght.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  /* Colors */
+  --color-cool-50: #f8fafc;
+  --color-cool-100: #f1f5f9;
+  --color-cool-200: #e2e8f0;
+  --color-cool-300: #cbd5e1;
+  --color-cool-900: #0f172a;
+
+  /* Fonts */
+  /* Satoshi is still your default sans (used everywhere by default) */
+  --font-sans: "Satoshi", "Inter", "system-ui", "sans-serif";
+
+  /* NEW: Use 'font-serif' class to apply EB Garamond */
+  --font-serif: "EBGaramond", "Georgia", "serif";
+}
+
+/* Global Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-cool-50);
+  color: var(--color-cool-900);
+  font-family: var(--font-sans); /* Applies Satoshi everywhere by default */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
