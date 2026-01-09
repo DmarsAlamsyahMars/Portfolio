@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 /* 1. Register Satoshi (Default Body Font) */
 @font-face {
   font-family: 'Satoshi';
@@ -61,4 +62,19 @@ body, html {
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+@theme {
+  /* Define the animation name and timing */
+  --animate-float-clean: float-clean 4s ease-in-out infinite;
+
+  /* Define the movement keyframes */
+  @keyframes float-clean {
+    0%, 100% { 
+      transform: translateY(0) scale(1); 
+    }
+    50% { 
+      transform: translateY(-6px) scale(1.05); 
+    }
+  }
 }

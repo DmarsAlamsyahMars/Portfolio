@@ -1,6 +1,31 @@
 import React from 'react';
 import ProjectDeck from './ProjectDeck';
 
+// 1. NEW COMPONENT: Encapsulates the link and the "sticker" logic
+const MarsLink = () => {
+  return (
+    <a
+      href="https://science.nasa.gov/mars/facts/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-cool-900 inline-flex items-center gap-2 group cursor-pointer select-none"
+      title="Visit NASA Mars Facts" // Accessibility tooltip
+    >
+      <span className="group-hover:text-cool-900/70 transition-colors">Mars</span>
+      <img
+        src="/images/marsplanet.webp"
+        alt="Mars Planet"
+        className="
+          w-[1.1em] h-[1.1em] object-contain 
+          translate-y-[2px] 
+          transition-transform duration-300 ease-out 
+          group-hover:scale-125 group-hover:rotate-12
+        "
+      />
+    </a>
+  );
+};
+
 interface HomeProps {
   setTab: (tab: string) => void;
 }
@@ -17,7 +42,10 @@ const Home: React.FC<HomeProps> = ({ setTab }) => {
         <p className="text-cool-900/40">
           Hi there, welcome to my space.
           <br />
-          I'm <span className="text-cool-900">Mars</span> an information systems graduate 
+          {/* IMPLEMENTATION: Using the component here with the enforced space */}
+          I'm{" "}
+          <MarsLink />
+          {" "}an information systems graduate 
           who loves anything about <span className="text-cool-900">interactive digital experience.</span>
         </p>
 
