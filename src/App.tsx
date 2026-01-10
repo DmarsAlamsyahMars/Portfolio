@@ -3,11 +3,11 @@ import ProjectDeck from './ProjectDeck';
 import Navbar from './navbar';
 import Home from './Home'; 
 import Projects from './Projects';
-import About from './About'; // <--- Import About
+import About from './About';
+import Lab from './Lab';
 
 // --- PLACEHOLDER PAGES ---
 const Archive = () => <div className="text-4xl">Archive Page</div>;
-const Lab = () => <div className="text-4xl">Lab Page</div>;
 const Connect = () => <div className="text-4xl">Connect Page</div>;
 
 const App: React.FC = () => {

@@ -1,19 +1,58 @@
-import React, { useRef, useState, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react';
+import { Canvas, useFrame, extend, useThree } from '@react-three/fiber';
 import { 
   Environment, 
   useTexture,
   PerspectiveCamera,
-  Float
+  Float,
+  shaderMaterial
 } from '@react-three/drei';
 import * as THREE from 'three';
+
+/**
+ * --- CUSTOM SHADER (UNCHANGED) ---
+ */
+const FadeMaterial = shaderMaterial(
+  {
+    uTexture: new THREE.Texture(),
+    uOpacity: 0.9,
+  },
+  `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  `
+    uniform sampler2D uTexture;
+    uniform float uOpacity;
+    varying vec2 vUv;
+
+    void main() {
+      vec4 tex = texture2D(uTexture, vUv);
+      
+      // Safe area: 0.15 (15%)
+      float dX = smoothstep(0.0, 0.15, vUv.x) * smoothstep(1.0, 0.85, vUv.x);
+      float dY = smoothstep(0.0, 0.15, vUv.y) * smoothstep(1.0, 0.85, vUv.y);
+      
+      float alphaMask = dX * dY;
+
+      gl_FragColor = vec4(tex.rgb, tex.a * uOpacity * alphaMask);
+    }
+  `
+);
+
+extend({ FadeMaterial });
 
 /**
  * CONFIGURATION
  */
 const CARD_SIZE = [3, 4]; 
-const CARD_SPACING = 2.6; 
-const DIAGONAL_FACTOR = { x: 1, y: 0.5 }; 
+const CARD_THICKNESS = 0.07; 
+const CARD_SPACING = 2.2;
+// DIAGONAL FACTOR: 
+const DIAGONAL_FACTOR = { x: 0.5, y: 0.15 }; 
 const SCROLL_SPEED = 0.002; 
 
 const PROJECTS_DATA = [
@@ -21,7 +60,7 @@ const PROJECTS_DATA = [
   { id: 2, image: '/images/aboutproject.webp' },
   { id: 3, image: '/images/camilanproject.webp' },
   { id: 4, image: '/images/cherrieproject.webp' },
-  { id: 5, image: '/images/img5.jpg' },
+  { id: 5, image: '/images/labproject.webp' },
   { id: 6, image: '/images/playgroundproject.webp' },
   { id: 7, image: '/images/camilanproject.webp' },
 ];
@@ -29,41 +68,41 @@ const PROJECTS_DATA = [
 const PROJECTS = [...PROJECTS_DATA, ...PROJECTS_DATA];
 const TOTAL_CARDS = PROJECTS.length; 
 
+/**
+ * HELPER: SCENE SETUP
+ */
+const SceneSetup = () => {
+  const { camera } = useThree();
+  useLayoutEffect(() => {
+    camera.lookAt(0, 0, 0);
+  }, [camera]);
+  return null;
+};
+
 interface CardProps {
   index: number;
   image: string;
   scrollRef: React.MutableRefObject<number>;
 }
 
+const getBlurUrl = (url: string) => {
+  const lastDotIndex = url.lastIndexOf('.');
+  if (lastDotIndex === -1) return `${url}_blur`;
+  return `${url.substring(0, lastDotIndex)}_blur${url.substring(lastDotIndex)}`;
+};
+
 const Card = ({ index, image, scrollRef }: CardProps) => {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHover] = useState(false);
-  
-  // Independent value for smooth hover animation
   const hoverValue = useRef(0);
   
-  const texture = useTexture(image);
-  
-  const transmissionTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = '#ffffff'; 
-      ctx.fillRect(0, 0, 512, 512);
-      const gradient = ctx.createRadialGradient(256, 256, 120, 256, 256, 300);
-      gradient.addColorStop(0, '#000000'); 
-      gradient.addColorStop(1, '#ffffff'); 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, 512, 512);
-    }
-    return new THREE.CanvasTexture(canvas);
-  }, []);
+  const blurImage = getBlurUrl(image);
+  const [texture, blurTexture] = useTexture([image, blurImage]);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
     
+    // --- LOOP LOGIC ---
     const totalLength = TOTAL_CARDS * CARD_SPACING;
     let zPos = (index * CARD_SPACING) + scrollRef.current;
     const halfLength = totalLength / 2;
@@ -72,25 +111,24 @@ const Card = ({ index, image, scrollRef }: CardProps) => {
     if (zPos < 0) zPos += totalLength;
     zPos -= halfLength;
 
-    const targetRotationX = -0.15;
-    const targetRotationY = 0.25; 
-    
-    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotationX, delta * 2);
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotationY, delta * 2);
-
+    // --- POSITION ---
     const xPos = -zPos * DIAGONAL_FACTOR.x; 
     const yPos = -zPos * DIAGONAL_FACTOR.y;
-    
-    const targetHover = hovered ? 0.8 : 0;
-    hoverValue.current = THREE.MathUtils.lerp(hoverValue.current, targetHover, delta * 15);
-    const hoverScale = hovered ? 1.1 : 1.0;
 
-    groupRef.current.position.x = xPos + hoverValue.current;
-    groupRef.current.position.y = yPos;
-    groupRef.current.position.z = zPos;
-    
+    // --- ROTATION ---
+    const targetRotationY = 0; 
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotationY, delta * 2);
+
+    // Hover Animation
+    const targetHover = hovered ? 0.6 : 0;
+    hoverValue.current = THREE.MathUtils.lerp(hoverValue.current, targetHover, delta * 15);
+    const hoverScale = hovered ? 1.05 : 1.0;
+
+    groupRef.current.position.set(xPos, yPos + hoverValue.current, zPos);
     groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, hoverScale, delta * 10));
   });
+
+  const [w, h] = CARD_SIZE;
 
   return (
     <group 
@@ -98,23 +136,43 @@ const Card = ({ index, image, scrollRef }: CardProps) => {
       onPointerOver={(e) => { e.stopPropagation(); setHover(true); }}
       onPointerOut={() => setHover(false)}
     >
-      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[CARD_SIZE[0], CARD_SIZE[1], 0.15]} /> 
-          <meshPhysicalMaterial 
-            map={texture}
-            transmissionMap={transmissionTexture} 
-            transmission={1.0}      
-            thickness={2.0}         
-            roughness={0.2}         
-            ior={1.5}               
-            clearcoat={1.0}         
-            clearcoatRoughness={0.1}
-            metalness={0.1}         
-            color="#ffffff"
-            transparent={false}     
+      <Float speed={2} rotationIntensity={0.05} floatIntensity={0.2}>
+        
+        {/* --- LAYER 1: DYNAMIC DARK GLASS EDGES (BACK) --- */}
+        <mesh position={[0, 0, -CARD_THICKNESS / 2]}>
+          <boxGeometry args={[w, h, CARD_THICKNESS]} />
+          <meshBasicMaterial attach="material-0" map={blurTexture} color="#aaaaaa" />
+          <meshBasicMaterial attach="material-1" map={blurTexture} color="#aaaaaa" />
+          <meshBasicMaterial attach="material-2" map={blurTexture} color="#aaaaaa" />
+          <meshBasicMaterial attach="material-3" map={blurTexture} color="#aaaaaa" />
+          <meshBasicMaterial attach="material-4" visible={false} />
+          <meshBasicMaterial attach="material-5" visible={false} />
+        </mesh>
+
+        {/* --- LAYER 2: BLUR GLOW (MIDDLE) --- */}
+        <mesh position={[0, 0, 0]}>
+          <planeGeometry args={[w, h]} />
+          <meshBasicMaterial 
+            map={blurTexture} 
+            transparent 
+            opacity={0.5} 
+            depthWrite={false} 
+            side={THREE.DoubleSide}
           />
         </mesh>
+
+        {/* --- LAYER 3: SHARP IMAGE (FRONT) --- */}
+        <mesh position={[0, 0, 0.01]}>
+          <planeGeometry args={[w, h]} />
+          {/* @ts-ignore */}
+          <fadeMaterial 
+            uTexture={texture} 
+            uOpacity={1.0}
+            transparent={true}
+            depthWrite={false} 
+          />
+        </mesh>
+
       </Float>
     </group>
   );
@@ -129,7 +187,15 @@ const SmoothScroll = ({ scrollRef, targetScroll }: { scrollRef: React.MutableRef
 
 const ProjectDeck: React.FC = () => {
   const scrollRef = useRef(0);
-  const targetScroll = useRef(0);
+  
+  // 1. START ANIMATION: 
+  // We set the target to 3.5 immediately. The scrollRef starts at 0.
+  // The 'SmoothScroll' component will see the difference and drift it there automatically.
+  const targetScroll = useRef(3.5); 
+  
+  // 2. BLINK FIX: 
+  // We start 'ready' as false. The div will be invisible (opacity-0).
+  const [ready, setReady] = useState(false);
 
   const handleWheel = (e: React.WheelEvent) => {
     targetScroll.current += e.deltaY * SCROLL_SPEED;
@@ -137,30 +203,27 @@ const ProjectDeck: React.FC = () => {
 
   return (
     <div 
-      className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+      // 3. FADE IN LOGIC:
+      // Added 'transition-opacity duration-1000' and the condition for opacity-100/0.
+      className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
       onWheel={handleWheel}
     >
       <Canvas
-        shadows
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
+        // 4. TRIGGER FADE IN:
+        // When the 3D scene finishes creating, we set ready to true.
+        onCreated={() => setReady(true)}
       >
-        <PerspectiveCamera makeDefault position={[0, 0, 14]} fov={35} />
+        <SceneSetup />
+
+        <PerspectiveCamera makeDefault position={[5.5, 7, 11]} fov={32} />
         
         <Environment preset="warehouse" background={false} blur={0.6} />
         
-        <ambientLight intensity={0.5} />
-        <spotLight 
-          position={[15, 15, 15]} 
-          angle={0.3} 
-          penumbra={1} 
-          intensity={2} 
-          castShadow 
-          shadow-bias={-0.0001}
-        />
+        <ambientLight intensity={1.2} /> 
+        <spotLight position={[-15, 20, 15]} angle={0.3} penumbra={1} intensity={2} />
         
-        <pointLight position={[-5, 5, -5]} intensity={1.5} color="white" />
-
         <SmoothScroll scrollRef={scrollRef} targetScroll={targetScroll} />
 
         <group position={[0, 0, 0]}> 
@@ -176,18 +239,8 @@ const ProjectDeck: React.FC = () => {
       </Canvas>
       
       {/* --- DREAMY CORNER OVERLAYS --- */}
-      
-      {/* Top Right Corner Cloud 
-          circle_at_top_right: Starts exactly at the corner
-          white -> transparent_45%: Fades out gently towards the center
-      */}
-      <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.7)_0%,transparent_45%)]" />
-
-      {/* Bottom Left Corner Cloud 
-          circle_at_bottom_left: Starts exactly at the corner
-          white -> transparent_45%: Fades out gently towards the center
-      */}
-      <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.7)_0%,transparent_45%)]" />
+      <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
+      <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
 
       <div className="absolute bottom-6 right-6 text-[10px] font-mono text-slate-400 select-none pointer-events-none opacity-60 z-20">
         SCROLL
