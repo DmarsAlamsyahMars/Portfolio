@@ -13,49 +13,49 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   return (
     <>
       {/* --- Connect Modal & Blur Overlay --- */}
-      <div 
-        className={`
-          fixed inset-0 z-[60] flex items-center justify-center px-4 font-sans
-          transition-all duration-500 ease-in-out
-          ${isConnectOpen 
-            ? 'bg-cool-100/60 backdrop-blur-lg opacity-100 visible' 
-            : 'bg-transparent backdrop-blur-none opacity-0 invisible pointer-events-none'}
-        `}
-        onClick={() => setIsConnectOpen(false)}
-      >
-        <div 
-          className="flex flex-row items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Email */}
-          <a 
-            href="mailto:dmarsalamsyah@gmail.com"
-            className="h-11 px-6 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-xl transition-all duration-200 hover:shadow-sm font-medium text-sm"
-          >
-            dmarsalamsyah@gmail.com
-          </a>
+<div 
+  className={`
+    fixed inset-0 z-[60] flex items-center justify-center px-6 font-sans
+    transition-all duration-500 ease-in-out
+    ${isConnectOpen 
+      ? 'bg-cool-100/60 backdrop-blur-lg opacity-100 visible' 
+      : 'bg-transparent backdrop-blur-none opacity-0 invisible pointer-events-none'}
+  `}
+  onClick={() => setIsConnectOpen(false)}
+>
+  <div 
+    className="flex flex-col md:flex-row items-center gap-3 w-full max-w-xs md:max-w-none justify-center"
+    onClick={(e) => e.stopPropagation()}
+  >
+    {/* Email */}
+    <a 
+      href="mailto:dmarsalamsyah@gmail.com"
+      className="h-11 w-full md:w-auto px-6 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-xl transition-all duration-200 hover:shadow-sm font-medium text-sm"
+    >
+      dmarsalamsyah@gmail.com
+    </a>
 
-          {/* LinkedIn */}
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="h-11 px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
-          >
-            LinkedIn
-          </a>
+    {/* LinkedIn */}
+    <a 
+      href="#" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="h-11 w-full md:w-auto px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
+    >
+      LinkedIn
+    </a>
 
-          {/* GitHub */}
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="h-11 px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
-          >
-            GitHub
-          </a>
-        </div>
-      </div>
+    {/* GitHub */}
+    <a 
+      href="#" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="h-11 w-full md:w-auto px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
+    >
+      GitHub
+    </a>
+  </div>
+</div>
 
       {/* --- Navbar --- */}
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[70]">
