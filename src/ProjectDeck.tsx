@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect, useEffect } from 'react';
+import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import { Canvas, useFrame, extend, useThree } from '@react-three/fiber';
 import { 
   Environment, 
@@ -10,7 +10,7 @@ import {
 import * as THREE from 'three';
 
 /**
- * --- CUSTOM SHADER (UNCHANGED) ---
+ * --- CUSTOM SHADER ---
  */
 const FadeMaterial = shaderMaterial(
   {
@@ -51,9 +51,9 @@ extend({ FadeMaterial });
 const CARD_SIZE = [3, 4]; 
 const CARD_THICKNESS = 0.07; 
 const CARD_SPACING = 2.2;
-// DIAGONAL FACTOR: 
 const DIAGONAL_FACTOR = { x: 0.5, y: 0.15 }; 
 const SCROLL_SPEED = 0.002; 
+const DRAG_SPEED = 0.030; 
 
 const PROJECTS_DATA = [
   { id: 1, image: '/images/maisonproject.webp' },
@@ -69,13 +69,23 @@ const PROJECTS = [...PROJECTS_DATA, ...PROJECTS_DATA];
 const TOTAL_CARDS = PROJECTS.length; 
 
 /**
- * HELPER: SCENE SETUP
+ * CAMERA RIG
+ * Handles the "Zoom Out" animation when dragging
  */
-const SceneSetup = () => {
-  const { camera } = useThree();
-  useLayoutEffect(() => {
-    camera.lookAt(0, 0, 0);
-  }, [camera]);
+const CameraRig = ({ isDragging }: { isDragging: React.MutableRefObject<boolean> }) => {
+  const vec = useMemo(() => new THREE.Vector3(), []);
+  
+  useFrame((state, delta) => {
+    // Zoom out to Z=14 when dragging, back to Z=11 when released
+    const targetPos = isDragging.current 
+      ? [6.5, 9, 14]   
+      : [5.5, 7, 11];  
+
+    vec.set(targetPos[0], targetPos[1], targetPos[2]);
+    state.camera.position.lerp(vec, delta * 3);
+    state.camera.lookAt(0, 0, 0);
+  });
+  
   return null;
 };
 
@@ -138,13 +148,15 @@ const Card = ({ index, image, scrollRef }: CardProps) => {
     >
       <Float speed={2} rotationIntensity={0.05} floatIntensity={0.2}>
         
-        {/* --- LAYER 1: DYNAMIC DARK GLASS EDGES (BACK) --- */}
+        {/* --- RESTORED: LAYER 1 (GLASS EDGES) --- */}
+        {/* This was the missing part. We map textures ONLY to the sides (0-3) */}
         <mesh position={[0, 0, -CARD_THICKNESS / 2]}>
           <boxGeometry args={[w, h, CARD_THICKNESS]} />
           <meshBasicMaterial attach="material-0" map={blurTexture} color="#aaaaaa" />
           <meshBasicMaterial attach="material-1" map={blurTexture} color="#aaaaaa" />
           <meshBasicMaterial attach="material-2" map={blurTexture} color="#aaaaaa" />
           <meshBasicMaterial attach="material-3" map={blurTexture} color="#aaaaaa" />
+          {/* Front and Back faces are hidden so inner layers show through */}
           <meshBasicMaterial attach="material-4" visible={false} />
           <meshBasicMaterial attach="material-5" visible={false} />
         </mesh>
@@ -187,40 +199,52 @@ const SmoothScroll = ({ scrollRef, targetScroll }: { scrollRef: React.MutableRef
 
 const ProjectDeck: React.FC = () => {
   const scrollRef = useRef(0);
-  
-  // 1. START ANIMATION: 
-  // We set the target to 3.5 immediately. The scrollRef starts at 0.
-  // The 'SmoothScroll' component will see the difference and drift it there automatically.
   const targetScroll = useRef(3.5); 
-  
-  // 2. BLINK FIX: 
-  // We start 'ready' as false. The div will be invisible (opacity-0).
   const [ready, setReady] = useState(false);
+  
+  // Drag State
+  const isDragging = useRef(false);
+  const lastY = useRef(0);
 
   const handleWheel = (e: React.WheelEvent) => {
     targetScroll.current += e.deltaY * SCROLL_SPEED;
   };
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDragging.current = true;
+    lastY.current = e.clientY;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
+    const deltaY = e.clientY - lastY.current;
+    targetScroll.current += deltaY * DRAG_SPEED;
+    lastY.current = e.clientY;
+  };
+
+  const handlePointerUp = () => {
+    isDragging.current = false;
+  };
+
   return (
     <div 
-      // 3. FADE IN LOGIC:
-      // Added 'transition-opacity duration-1000' and the condition for opacity-100/0.
-      className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
+      className={`absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-none transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
       onWheel={handleWheel}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
     >
       <Canvas
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 2]}
-        // 4. TRIGGER FADE IN:
-        // When the 3D scene finishes creating, we set ready to true.
         onCreated={() => setReady(true)}
       >
-        <SceneSetup />
+        <CameraRig isDragging={isDragging} />
 
         <PerspectiveCamera makeDefault position={[5.5, 7, 11]} fov={32} />
         
         <Environment preset="warehouse" background={false} blur={0.6} />
-        
         <ambientLight intensity={1.2} /> 
         <spotLight position={[-15, 20, 15]} angle={0.3} penumbra={1} intensity={2} />
         
@@ -228,22 +252,16 @@ const ProjectDeck: React.FC = () => {
 
         <group position={[0, 0, 0]}> 
           {PROJECTS.map((proj, i) => (
-            <Card 
-              key={i} 
-              index={i} 
-              scrollRef={scrollRef}
-              {...proj} 
-            />
+            <Card key={i} index={i} scrollRef={scrollRef} {...proj} />
           ))}
         </group>
       </Canvas>
       
-      {/* --- DREAMY CORNER OVERLAYS --- */}
       <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
       <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
 
       <div className="absolute bottom-6 right-6 text-[10px] font-mono text-slate-400 select-none pointer-events-none opacity-60 z-20">
-        SCROLL
+        SCROLL OR DRAG
       </div>
     </div>
   );

@@ -2,11 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const WORKS = [
-  { id: 1, src: '/images/aboutproject.webp', rotate: -3, offset: '0px', delay: 0.1 },
-  { id: 2, src: '/images/aboutproject.webp', rotate: 2, offset: '40px', delay: 0.2 },
-  { id: 3, src: '/images/aboutproject.webp', rotate: -2, offset: '-20px', delay: 0.3 },
-  { id: 4, src: '/images/aboutproject.webp', rotate: 4, offset: '30px', delay: 0.4 },
-  { id: 5, src: '/images/aboutproject.webp', rotate: -1, offset: '10px', delay: 0.5 },
+  { id: 1, src: '/images/labproject.webp', rotate: -3, offset: '0px', delay: 0.1 },
+  { id: 2, src: '/images/labproject.webp', rotate: 2, offset: '40px', delay: 0.2 },
+  { id: 3, src: '/images/labproject.webp', rotate: -2, offset: '-20px', delay: 0.3 },
+  { id: 4, src: '/images/labproject.webp', rotate: 4, offset: '30px', delay: 0.4 },
+  { id: 5, src: '/images/labproject.webp', rotate: -1, offset: '10px', delay: 0.5 },
 ];
 
 const Lab: React.FC = () => {

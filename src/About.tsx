@@ -51,7 +51,7 @@ const About: React.FC = () => {
 
   const toggleLike = (id: number) => {
     setLikedCardIds(prev => {
-      if (prev.includes(id)) return prev; // Already liked, keep it (optional: remove to toggle off)
+      if (prev.includes(id)) return prev; 
       return [...prev, id];
     });
   };
@@ -80,6 +80,34 @@ const About: React.FC = () => {
           <p className="mt-4 text-cool-900/60 font-sans text-sm lg:text-base leading-relaxed text-justify">
             Honestly, I think the best digital experiences happen when we allow logic and creative intuition to work side by side.
           </p>
+
+          {/* --- UPDATED ICONS WITH MICRO ANIMATIONS --- */}
+          <div className="flex flex-row gap-3 mt-6">
+            <motion.img 
+                src="/music_icon.webp" 
+                alt="Music" 
+                className="w-14 h-14 object-contain cursor-pointer"
+                whileHover={{ scale: 1.15, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            />
+            <motion.img 
+                src="/settings_icon.webp" 
+                alt="Settings" 
+                className="w-14 h-14 object-contain cursor-pointer" 
+                whileHover={{ scale: 1.15, rotate: -5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            />
+            <motion.img 
+                src="/movies_icon.webp" 
+                alt="Movies" 
+                className="w-14 h-14 object-contain cursor-pointer" 
+                whileHover={{ scale: 1.15, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            />
+          </div>
         </div>
 
         {/* 2. Middle: Stack + Caption Container */}
@@ -122,14 +150,13 @@ const About: React.FC = () => {
         {/* 3. Right Text */}
         <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards">
           <p className="text-cool-900/60 font-sans text-sm lg:text-base leading-relaxed text-justify">
-            When I was helping the Procurement Division at the West Java government Institution 
-            to simplify their procurement systems, I learned that building the software is only 
-            half the job. The real work was learning how to truly listen to stakeholder requests 
+            I had the chance to help the Procurement Division at the West Java government Institution 
+            to integrate their web procurement systems, I learned how to truly listen to stakeholder requests 
             and communicate progress professionally so we could reach the goal together.
           </p>
           <p className="mt-4 text-cool-900/60 font-sans text-sm lg:text-base leading-relaxed text-justify">
-            And back at university, leading a design division in IOSBC taught me a different kind of lesson. 
-            it was where I learned how to lead a team and to support the people I worked with.
+            Also, I was the head of design division at IOSBC during my time at university, where I learned how to lead
+            a team and support the people I worked with.
           </p>
         </div>
 
@@ -139,7 +166,7 @@ const About: React.FC = () => {
 };
 
 // ---------------------------------------------------------
-// UPDATED CARD COMPONENT
+// REPAIRED CARD COMPONENT (Mobile & Desktop Compatible)
 // ---------------------------------------------------------
 
 interface CardProps {
@@ -153,7 +180,8 @@ interface CardProps {
 const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
   const isFront = index === 0;
   const [showBigHeart, setShowBigHeart] = useState(false);
-  const clickTimeoutRef = useRef<number | null>(null);
+  const lastTapRef = useRef<number>(0);
+  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getPosition = (idx: number) => {
     switch(idx) {
@@ -167,21 +195,26 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
 
   const position = getPosition(index);
 
-  // Handle Double Click logic
-  const handleDoubleClick = () => {
-    if (!isFront) return;
-    
-    // Trigger the like state in parent
+  // Unified Like Handler (Animation + State)
+  const triggerLike = () => {
     onLike();
-    
-    // Trigger local big heart animation
     setShowBigHeart(true);
-    
-    // Reset animation after it plays
     if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
-    clickTimeoutRef.current = setTimeout(() => {
-      setShowBigHeart(false);
-    }, 800);
+    clickTimeoutRef.current = setTimeout(() => setShowBigHeart(false), 800);
+  };
+
+  // Mobile-safe Double Tap Detection
+  const handleTap = () => {
+    if (!isFront) return;
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      triggerLike();
+      lastTapRef.current = 0; // Reset
+    } else {
+      lastTapRef.current = now;
+    }
   };
 
   return (
@@ -191,7 +224,8 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} 
       dragSnapToOrigin={true}
       
-      onDoubleClick={handleDoubleClick} // Double click to like!
+      // Use onTap for mobile compatibility instead of onDoubleClick
+      onTap={handleTap} 
 
       animate={{
         x: position.x,
@@ -215,18 +249,24 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
         }
       }}
 
-      // Changed from img to div wrapper to support overlays
+      // touch-action: none prevents the browser from zooming on double tap
+      style={{ touchAction: 'none' }}
       className={`absolute w-[85%] h-[90%] rounded-xl shadow-lg select-none overflow-hidden bg-white ${isFront ? 'cursor-grab' : ''}`}
     >
-      {/* 1. The Image */}
       <img 
         src={card.src} 
         alt={card.title} 
         className="w-full h-full object-cover pointer-events-none" 
       />
 
-      {/* 2. The Corner Heart Indicator (Top Right) */}
-      <div className="absolute top-4 right-4 z-10 transition-transform active:scale-90">
+      {/* Heart Indicator - Now clickable on single tap */}
+      <div 
+        onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the card's tap logic
+            triggerLike();
+        }}
+        className="absolute top-4 right-4 z-10 p-2 cursor-pointer transition-transform active:scale-90"
+      >
         <svg 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 24 24" 
@@ -239,7 +279,6 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
         </svg>
       </div>
 
-      {/* 3. The "Big Heart" Pop-up Animation */}
       <AnimatePresence>
         {showBigHeart && (
             <motion.div 
