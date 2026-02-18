@@ -25,7 +25,7 @@ const Lab: React.FC = () => {
     <div className="relative flex flex-col w-full min-h-screen bg-transparent px-6 lg:px-12 pt-10 pb-32 overflow-y-auto overflow-x-hidden">
       
       <header className="mb-12 lg:mb-6 animate-in fade-in slide-in-from-top-8 duration-700">
-        <h1 className="text-6xl lg:text-8xl leading-none text-cool-900 font-serif">
+        <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
           Lab
         </h1>
       </header>
@@ -40,7 +40,7 @@ const Lab: React.FC = () => {
             return (
               <div 
                 key={work.id} 
-                className="relative z-10 w-full max-w-md lg:w-[14vw]"
+                className="relative z-10 w-full max-w-md lg:w-[12vw]"
                 // Only apply the messy offset on Desktop
                 style={{ marginTop: isDesktop ? work.offset : '0px' }} 
               >

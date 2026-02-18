@@ -1,131 +1,323 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Added title/desc for the expanded view
-const WORKS = [
-  { id: 1, src: '/images/labproject.webp', rotate: -3, offset: '0px', delay: 0.1, title: 'Project Alpha', desc: 'An exploration of minimal typography and negative space.' },
-  { id: 2, src: '/images/labproject.webp', rotate: 2, offset: '40px', delay: 0.2, title: 'Project Beta', desc: 'A study in color theory and interactive motion.' },
-  { id: 3, src: '/images/labproject.webp', rotate: -2, offset: '-20px', delay: 0.3, title: 'Project Gamma', desc: 'Experimental 3D rendering in a 2D context.' },
-  { id: 4, src: '/images/labproject.webp', rotate: 4, offset: '30px', delay: 0.4, title: 'Project Delta', desc: 'A user interface designed for accessibility first.' },
-  { id: 5, src: '/images/labproject.webp', rotate: -1, offset: '10px', delay: 0.5, title: 'Project Epsilon', desc: 'Abstract generative art created with code.' },
-];
+// 1. Define the data structure
+interface CardData {
+  id: number;
+  src: string;
+  title: string;
+  subtitle: string;
+  imgScale?: number;
+  imgX?: string;
+  imgY?: string;
+}
 
-const Lab: React.FC = () => {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+const About: React.FC = () => {
+  // Store the IDs of liked cards
+  const [likedCardIds, setLikedCardIds] = useState<number[]>([]);
+
+  const [cards, setCards] = useState<CardData[]>([
+    { 
+      id: 1, 
+      src: '/images/about/aboutimg1.webp', 
+      title: 'Hi! :-)', 
+      subtitle: 'A random selfie never hurt',
+      imgScale: 1,
+      imgX: '0px', 
+      imgY: '0px',
+    },
+    { 
+      id: 2, 
+      src: '/images/about/aboutimg2.webp', 
+      title: 'I survived thesis defense!!!', 
+      subtitle: 'Jul 2025' 
+    },
+    { 
+      id: 3, 
+      src: '/images/about/aboutimg3.webp', 
+      title: 'Grateful for a semester exchange at UM', 
+      subtitle: 'Malaysia, 2024' 
+    },
+    { 
+      id: 4, 
+      src: '/images/about/aboutimg4.webp', 
+      title: 'Graduated!', 
+      subtitle: 'Telkom University, Nov 2025' 
+    },
+  ]);
+
+  const moveToEnd = (fromIndex: number) => {
+    setCards((currentCards) => {
+      const newCards = [...currentCards];
+      const [movedCard] = newCards.splice(fromIndex, 1);
+      newCards.push(movedCard);
+      return newCards;
+    });
+  };
+
+  const toggleLike = (id: number) => {
+    setLikedCardIds(prev => {
+      if (prev.includes(id)) return prev; 
+      return [...prev, id];
+    });
+  };
 
   return (
-    <div className="relative flex flex-col w-full min-h-screen bg-transparent px-6 lg:px-12 pt-10 pb-32 overflow-y-auto overflow-x-hidden">
+    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 h-screen w-full overflow-y-auto lg:overflow-hidden pb-32 lg:pb-12 px-4 lg:px-0">
       
-      <header className="mb-12 lg:mb-6 animate-in fade-in slide-in-from-top-8 duration-700">
-        <h1 className="text-6xl lg:text-8xl leading-none text-cool-900 font-serif">
-          Lab
+      {/* Header */}
+      <div className="animate-in fade-in slide-in-from-top-8 duration-700 shrink-0">
+        <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
+          About
         </h1>
-      </header>
+      </div>
 
-      <main className="w-full max-w-7xl mx-auto flex-grow">
-        <div className="flex flex-col lg:flex-row lg:flex-wrap items-center lg:items-start justify-center gap-12 lg:gap-6">
-          
-          {WORKS.map((work) => (
-            <motion.div
-              layoutId={`card-${work.id}`} // Connects this item to the modal
-              key={work.id}
-              onClick={() => setSelectedId(work.id)}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 60, 
-                damping: 15, 
-                delay: work.delay 
-              }}
-              style={{
-                '--tilt': `${work.rotate}deg`,
-                '--stagger': work.offset,
-              } as React.CSSProperties}
-              className="
-                relative
-                w-[80vw] sm:w-[60vw] aspect-[3/4] 
-                rotate-[var(--tilt)]
-                lg:w-[14vw] lg:mt-[var(--stagger)] 
-                hover:rotate-0 hover:scale-105 hover:z-30 
-                cursor-pointer
-                transition-all duration-500 ease-out
-              "
-            >
-              {/* Image Component */}
-              <div className="w-full h-full bg-white rounded-sm overflow-hidden shadow-md hover:shadow-2xl border border-cool-200">
-                 <motion.img 
-                   src={work.src} 
-                   alt="design work" 
-                   className="w-full h-full object-cover" 
-                 />
-              </div>
-            </motion.div>
-          ))}
+      {/* Grid Container */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 w-full max-w-6xl mx-auto items-start md:items-center">
 
-        </div>
-      </main>
-      
-      {/* EXPANDED VIEW OVERLAY */}
-      <AnimatePresence>
-        {selectedId && (
-          <>
-            {/* Backdrop with Blur */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              className="fixed inset-0 bg-black/20 backdrop-blur-md z-40"
+        {/* 1. Left Text */}
+        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-200 fill-mode-backwards">
+          <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+            I recently graduated in information systems, 
+            where I found myself equally drawn to the logic 
+            of coding and the craft of UI/UX, which stems 
+            from my love for graphic design.
+          </p>
+          <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+            Honestly, I think the best digital experiences happen when we allow logic and creative intuition to work side by side.
+          </p>
+          {/* NEW: Light grey text added here */}
+          <p className="mt-8 mb-3 text-cool-900/50 font-sans text-sm lg:text-base">
+            here&apos;s more of me
+          </p>
+          {/* --- UPDATED ICONS WITH MICRO ANIMATIONS --- */}
+          <div className="flex flex-row gap-2 mt-6">
+            <motion.img 
+                src="/music_icon.webp" 
+                alt="Music" 
+                className="w-14 h-14 object-contain cursor-pointer"
+                whileHover={{ scale: 1.15, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
             />
+            <motion.img 
+                src="/settings_icon.webp" 
+                alt="Settings" 
+                className="w-14 h-14 object-contain cursor-pointer" 
+                whileHover={{ scale: 1.15, rotate: -5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            />
+            <motion.img 
+                src="/movies_icon.webp" 
+                alt="Movies" 
+                className="w-14 h-14 object-contain cursor-pointer" 
+                whileHover={{ scale: 1.15, rotate: 5 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            />
+          </div>
+        </div>
 
-            {/* Expanded Card */}
-            <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-              {WORKS.map(work => (
-                work.id === selectedId && (
-                  <motion.div
-                    layoutId={`card-${work.id}`} // Matches the ID above
-                    key={work.id}
-                    className="w-[90vw] max-w-[500px] bg-white rounded-lg overflow-hidden shadow-2xl pointer-events-auto"
-                  >
-                    {/* Image Area */}
-                    <div className="relative aspect-video">
-                       <motion.img 
-                         src={work.src} 
-                         className="w-full h-full object-cover" 
-                       />
-                       <button 
-                        onClick={() => setSelectedId(null)}
-                        className="absolute top-4 right-4 bg-white/50 hover:bg-white p-2 rounded-full text-black transition-colors"
-                       >
-                         ✕
-                       </button>
-                    </div>
-
-                    {/* Text Content - Animate in after card expands */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="p-6"
-                    >
-                      <h3 className="text-2xl font-serif mb-2">{work.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {work.desc}
-                      </p>
-                    </motion.div>
-                  </motion.div>
-                )
-              ))}
+        {/* 2. Middle: Stack + Caption Container */}
+        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards">
+            
+            {/* The Card Stack */}
+            <div className="relative w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
+                {cards.map((card, index) => {
+                  return (
+                    <Card 
+                      key={card.id} 
+                      card={card} 
+                      index={index} 
+                      onSwipe={() => moveToEnd(0)}
+                      isLiked={likedCardIds.includes(card.id)}
+                      onLike={() => toggleLike(card.id)}
+                    />
+                  );
+                })}
             </div>
-          </>
-        )}
-      </AnimatePresence>
 
-      <div className="h-20 lg:hidden" />
+            {/* The Caption */}
+            <div className="text-center h-16">
+                <motion.div
+                  key={cards[0].id} 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                    <h3 className="text-cool-900 font-sans font-medium text-lg leading-tight">
+                        {cards[0].title}
+                    </h3>
+                    <p className="text-cool-900/60 font-sans text-sm mt-1">
+                        {cards[0].subtitle}
+                    </p>
+                </motion.div>
+            </div>
+        </div>
+
+        {/* 3. Right Text */}
+        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards">
+          <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+            I had the chance to help the Procurement Division at the West Java government Institution 
+            to integrate their web procurement systems, I learned how to truly listen to stakeholder requests 
+            and communicate progress professionally so we could reach the goal together.
+          </p>
+          <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+            Also, I was the head of design division at IOSBC during my time at university, where I learned how to lead
+            a team and support the people I worked with.
+          </p>
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default Lab;
+// ---------------------------------------------------------
+// REPAIRED CARD COMPONENT (Mobile & Desktop Compatible)
+// ---------------------------------------------------------
+
+interface CardProps {
+  card: CardData;
+  index: number;
+  onSwipe: () => void;
+  isLiked: boolean;
+  onLike: () => void;
+}
+
+const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
+  const isFront = index === 0;
+  const [showBigHeart, setShowBigHeart] = useState(false);
+  const lastTapRef = useRef<number>(0);
+  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const getPosition = (idx: number) => {
+    switch(idx) {
+      case 0: return { x: 0, y: 0, rotate: 0, scale: 1, zIndex: 50, opacity: 1 };
+      case 1: return { x: 15, y: -15, rotate: 4, scale: 0.95, zIndex: 40, opacity: 1 };
+      case 2: return { x: -10, y: 15, rotate: -3, scale: 0.95, zIndex: 30, opacity: 1 };
+      case 3: return { x: -18, y: 5, rotate: -6, scale: 0.9, zIndex: 20, opacity: 1 };
+      default: return { x: 0, y: 0, rotate: 0, scale: 0.8, zIndex: 0, opacity: 0 };
+    }
+  };
+
+  const position = getPosition(index);
+
+  // Unified Like Handler (Animation + State)
+  const triggerLike = () => {
+    onLike();
+    setShowBigHeart(true);
+    if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+    clickTimeoutRef.current = setTimeout(() => setShowBigHeart(false), 800);
+  };
+
+  // Mobile-safe Double Tap Detection
+  const handleTap = () => {
+    if (!isFront) return;
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      triggerLike();
+      lastTapRef.current = 0; // Reset
+    } else {
+      lastTapRef.current = now;
+    }
+  };
+
+  return (
+    <motion.div
+      drag={isFront} 
+      dragElastic={0.6} 
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} 
+      dragSnapToOrigin={true}
+      
+      // Use onTap for mobile compatibility instead of onDoubleClick
+      onTap={handleTap} 
+
+      animate={{
+        x: position.x,
+        y: position.y,
+        rotate: position.rotate,
+        scale: position.scale,
+        zIndex: position.zIndex,
+        opacity: position.opacity
+      }}
+      
+      transition={{ 
+        type: "spring", stiffness: 200, damping: 20,
+        opacity: { duration: 0.2 } 
+      }}
+
+      whileTap={{ cursor: "grabbing" }}
+      onDragEnd={(e, info) => {
+        const threshold = 100;
+        if (Math.abs(info.offset.x) > threshold || Math.abs(info.offset.y) > threshold) {
+          onSwipe();
+        }
+      }}
+
+      // touch-action: none prevents the browser from zooming on double tap
+      style={{ touchAction: 'none' }}
+      className={`absolute w-[85%] h-[90%] rounded-xl shadow-lg select-none overflow-hidden bg-white ${isFront ? 'cursor-grab' : ''}`}
+    >
+      <img 
+        src={card.src} 
+        alt={card.title} 
+        className="w-full h-full object-cover pointer-events-none"
+        style={{
+    // default to scale(1) and translate(0,0) if no values are provided
+    transform: `scale(${card.imgScale || 1}) translate(${card.imgX || '0px'}, ${card.imgY || '0px'})`,
+    // Optional: smooth transition if you plan to change these dynamically later
+    transition: 'transform 0.3s ease' 
+  }}
+      />
+
+      {/* Heart Indicator - Now clickable on single tap */}
+      <div 
+        onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the card's tap logic
+            triggerLike();
+        }}
+        className="absolute top-4 right-4 z-10 p-2 cursor-pointer transition-transform active:scale-90"
+      >
+        <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            className={`w-7 h-7 drop-shadow-md transition-colors duration-300 ${isLiked ? 'fill-red-500 text-red-500' : 'fill-transparent text-white/60 stroke-[2px]'}`}
+            stroke="currentColor" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+        >
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        </svg>
+      </div>
+
+      <AnimatePresence>
+        {showBigHeart && (
+            <motion.div 
+                className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1.2, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24" 
+                    className="w-24 h-24 fill-white text-white drop-shadow-xl opacity-60"
+                    stroke="currentColor" 
+                    strokeWidth="0"
+                >
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </svg>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
+    </motion.div>
+  );
+};
+
+export default About;
