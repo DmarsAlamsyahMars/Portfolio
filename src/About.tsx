@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AboutIcon from './AboutIcon';
 
 // 1. Define the data structure
 interface CardData {
@@ -63,7 +64,7 @@ const About: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 h-screen w-full overflow-y-auto lg:overflow-hidden pb-32 lg:pb-12 px-4 lg:px-0">
+    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 h-screen w-full overflow-y-auto lg:overflow-visible pb-32 lg:pb-12 px-4 lg:px-0">
       
       {/* Header */}
       <div className="animate-in fade-in slide-in-from-top-8 duration-700 shrink-0">
@@ -90,40 +91,15 @@ const About: React.FC = () => {
           <p className="mt-8 mb-3 text-cool-900/50 font-sans text-sm lg:text-base">
             here&apos;s more of me
           </p>
-          {/* --- UPDATED ICONS WITH MICRO ANIMATIONS --- */}
-          <div className="flex flex-row gap-2 mt-6">
-            <motion.img 
-                src="/music_icon.webp" 
-                alt="Music" 
-                className="w-14 h-14 object-contain cursor-pointer"
-                whileHover={{ scale: 1.15, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            />
-            <motion.img 
-                src="/settings_icon.webp" 
-                alt="Settings" 
-                className="w-14 h-14 object-contain cursor-pointer" 
-                whileHover={{ scale: 1.15, rotate: -5 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            />
-            <motion.img 
-                src="/movies_icon.webp" 
-                alt="Movies" 
-                className="w-14 h-14 object-contain cursor-pointer" 
-                whileHover={{ scale: 1.15, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            />
-          </div>
+          {/* Render the extracted icons */}
+          <AboutIcon />
         </div>
 
         {/* 2. Middle: Stack + Caption Container */}
         <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards">
             
             {/* The Card Stack */}
-            <div className="relative w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
+            <div className="relative z-20 w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
                 {cards.map((card, index) => {
                   return (
                     <Card 
