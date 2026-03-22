@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AboutIcon from './AboutIcon';
+import NowPlaying from './NowPlaying';
 
 // 1. Define the data structure
 interface CardData {
@@ -87,12 +87,8 @@ const About: React.FC = () => {
           <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             Honestly, I think the best digital experiences happen when we allow logic and creative intuition to work side by side.
           </p>
-          {/* NEW: Light grey text added here */}
-          <p className="mt-8 mb-3 text-cool-900/50 font-sans text-sm lg:text-base">
-            here&apos;s more of me
-          </p>
-          {/* Render the extracted icons */}
-          <AboutIcon />
+          {/* Render the Now Playing placeholder */}
+          <NowPlaying />
         </div>
 
         {/* 2. Middle: Stack + Caption Container */}
@@ -243,11 +239,11 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
         alt={card.title} 
         className="w-full h-full object-cover pointer-events-none"
         style={{
-    // default to scale(1) and translate(0,0) if no values are provided
-    transform: `scale(${card.imgScale || 1}) translate(${card.imgX || '0px'}, ${card.imgY || '0px'})`,
-    // Optional: smooth transition if you plan to change these dynamically later
-    transition: 'transform 0.3s ease' 
-  }}
+          // default to scale(1) and translate(0,0) if no values are provided
+          transform: `scale(${card.imgScale || 1}) translate(${card.imgX || '0px'}, ${card.imgY || '0px'})`,
+          // Optional: smooth transition if you plan to change these dynamically later
+          transition: 'transform 0.3s ease' 
+        }}
       />
 
       {/* Heart Indicator - Now clickable on single tap */}
