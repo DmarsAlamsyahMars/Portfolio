@@ -37,7 +37,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
     {/* LinkedIn */}
     <a 
-      href="#" 
+      href="https://www.linkedin.com/in/dmarsalamsyah" 
       target="_blank" 
       rel="noopener noreferrer"
       className="h-11 w-full md:w-auto px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
     {/* Resume */}
     <a 
-      href="#" 
+      href="currentcv.pdf" 
       target="_blank" 
       rel="noopener noreferrer"
       className="h-11 w-full md:w-auto px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"

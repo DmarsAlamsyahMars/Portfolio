@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NowPlaying from './NowPlaying';
+import ToolStack from './ToolStack';
 
 // 1. Define the data structure
 interface CardData {
@@ -92,7 +93,7 @@ const About: React.FC = () => {
         </div>
 
         {/* 2. Middle: Stack + Caption Container */}
-        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards">
+        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards lg:-mt-12">
             
             {/* The Card Stack */}
             <div className="relative z-20 w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
@@ -129,7 +130,7 @@ const About: React.FC = () => {
         </div>
 
         {/* 3. Right Text */}
-        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards">
+        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards lg:self-start lg:-mt-18">          <ToolStack />
           <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             I had the chance to help the Procurement Division at the West Java government Institution 
             to integrate their web procurement systems, I learned how to truly listen to stakeholder requests 
