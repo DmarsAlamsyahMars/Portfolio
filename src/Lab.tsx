@@ -22,13 +22,13 @@ const Lab: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col w-full min-h-screen bg-transparent px-6 lg:px-12 pt-10 pb-32 overflow-y-auto overflow-x-hidden">
+    <div className="relative flex flex-col w-full min-h-screen bg-transparent px-4 lg:px-0 pt-0 lg:pt-4 pb-32 overflow-y-auto overflow-x-hidden">
       
-      <header className="mb-12 lg:mb-6 animate-in fade-in slide-in-from-top-8 duration-700">
+      <div className="shrink-0 z-10">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
           Lab
         </h1>
-      </header>
+      </div>
 
       <main className="w-full max-w-7xl mx-auto flex-grow">
         {/* Mobile: Flex Column (Straight), Desktop: Row (Messy) */}

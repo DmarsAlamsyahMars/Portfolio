@@ -69,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 setIsConnectOpen(false);
               }}
               className={`
-                relative px-4 py-2 rounded-md text-sm transition-all duration-300 ease-in-out font-medium
+                relative px-4 py-2 rounded-md text-sm transition-all duration-100 ease-in-out font-medium
                 ${
                   activeTab === item
                     ? 'text-cool-900 bg-cool-200/50' // Active state: Exactly matches the hover appearance (darker text + subtle bg)

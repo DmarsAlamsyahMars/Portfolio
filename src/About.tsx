@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NowPlaying from './NowPlaying';
 import ToolStack from './ToolStack';
+import ConnectIcons from './ConnectIcons';
 
 // 1. Define the data structure
 interface CardData {
@@ -23,7 +24,7 @@ const About: React.FC = () => {
       id: 1, 
       src: '/images/about/aboutimg1.webp', 
       title: 'Hi! :-)', 
-      subtitle: 'A random selfie never hurt',
+      subtitle: '',
       imgScale: 1,
       imgX: '0px', 
       imgY: '0px',
@@ -31,19 +32,19 @@ const About: React.FC = () => {
     { 
       id: 2, 
       src: '/images/about/aboutimg2.webp', 
-      title: 'I survived thesis defense!!!', 
+      title: 'i survived thesis defense!!!', 
       subtitle: 'Jul 2025' 
     },
     { 
       id: 3, 
       src: '/images/about/aboutimg3.webp', 
-      title: 'Grateful for a semester exchange at UM', 
+      title: 'grateful for a semester exchange at UM', 
       subtitle: 'Malaysia, 2024' 
     },
     { 
       id: 4, 
       src: '/images/about/aboutimg4.webp', 
-      title: 'Graduated!', 
+      title: 'graduated!', 
       subtitle: 'Telkom University, Nov 2025' 
     },
   ]);
@@ -68,7 +69,7 @@ const About: React.FC = () => {
     <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 h-screen w-full overflow-y-auto lg:overflow-visible pb-32 lg:pb-12 px-4 lg:px-0">
       
       {/* Header */}
-      <div className="animate-in fade-in slide-in-from-top-8 duration-700 shrink-0">
+      <div className="shrink-0 z-10">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
           About
         </h1>
@@ -81,19 +82,20 @@ const About: React.FC = () => {
         <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-200 fill-mode-backwards">
           <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             I recently graduated in information systems, 
-            where I found myself equally drawn to the logic 
+            where i found myself equally drawn to the logic 
             of coding and the craft of UI/UX, which stems 
             from my love for graphic design.
           </p>
           <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
-            Honestly, I think the best digital experiences happen when we allow logic and creative intuition to work side by side.
+            Honestly, i think the best digital experiences happen when we allow logic and creative intuition to work side by side.
           </p>
           {/* Render the Now Playing placeholder */}
+          <div className="mt-8 lg:mt-6"></div>
           <NowPlaying />
         </div>
 
         {/* 2. Middle: Stack + Caption Container */}
-        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards lg:-mt-12">
+        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards lg:-mt-20">
             
             {/* The Card Stack */}
             <div className="relative z-20 w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
@@ -130,16 +132,18 @@ const About: React.FC = () => {
         </div>
 
         {/* 3. Right Text */}
-        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards lg:self-start lg:-mt-18">          <ToolStack />
+        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards lg:self-start lg:-mt-24">          <ToolStack />
           <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
-            I had the chance to help the Procurement Division at the West Java government Institution 
-            to integrate their web procurement systems, I learned how to truly listen to stakeholder requests 
-            and communicate progress professionally so we could reach the goal together.
+            What i've come to love most is the whole journey of sitting with a problem, understanding 
+            the people in it, then crafting something that just feels right. 
           </p>
           <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
-            Also, I was the head of design division at IOSBC during my time at university, where I learned how to lead
-            a team and support the people I worked with.
+            From all of that, i came to love the craft just as much as 
+            the conversations that shaped it.
           </p>
+          <div className="mt-4"> {/* Adjust the number (8, 10, 12) to get the gap you want */}
+          <ConnectIcons />
+          </div>
         </div>
 
       </div>
