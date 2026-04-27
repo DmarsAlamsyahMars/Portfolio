@@ -4,7 +4,6 @@ import NowPlaying from './NowPlaying';
 import ToolStack from './ToolStack';
 import ConnectIcons from './ConnectIcons';
 
-// 1. Define the data structure
 interface CardData {
   id: number;
   src: string;
@@ -15,14 +14,32 @@ interface CardData {
   imgY?: string;
 }
 
+const entranceVariants = {
+  hidden: {
+    opacity: 0,
+    y: -24,
+    scale: 0.94,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 260,
+      damping: 22,
+      mass: 0.8,
+    },
+  },
+};
+
 const About: React.FC = () => {
-  // Store the IDs of liked cards
   const [likedCardIds, setLikedCardIds] = useState<number[]>([]);
 
   const [cards, setCards] = useState<CardData[]>([
     { 
       id: 1, 
-      src: '/images/about/aboutimg1.webp', 
+      src: '/images/about/aboutimg1-compressed.webp', 
       title: 'Hi! :-)', 
       subtitle: '',
       imgScale: 1,
@@ -66,8 +83,7 @@ const About: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 h-screen w-full overflow-y-auto lg:overflow-visible pb-32 lg:pb-12 px-4 lg:px-0">
-      
+    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-8 lg:gap-10 min-h-[100dvh] w-full overflow-y-auto lg:overflow-visible pb-0 lg:pb-12 px-4 lg:px-0">
       {/* Header */}
       <div className="shrink-0 z-10">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
@@ -79,7 +95,11 @@ const About: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16 w-full max-w-6xl mx-auto items-start md:items-center">
 
         {/* 1. Left Text */}
-        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-200 fill-mode-backwards">
+        <motion.div
+          variants={entranceVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             I recently graduated in information systems, 
             where i found myself equally drawn to the logic 
@@ -89,14 +109,17 @@ const About: React.FC = () => {
           <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             Honestly, i think the best digital experiences happen when we allow logic and creative intuition to work side by side.
           </p>
-          {/* Render the Now Playing placeholder */}
           <div className="mt-8 lg:mt-6"></div>
           <NowPlaying />
-        </div>
+        </motion.div>
 
         {/* 2. Middle: Stack + Caption Container */}
-        <div className="flex flex-col items-center justify-center animate-in fade-in slide-in-from-top-8 duration-700 delay-400 fill-mode-backwards lg:-mt-20">
-            
+        <motion.div
+          variants={entranceVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col items-center justify-center lg:-mt-20"
+        >
             {/* The Card Stack */}
             <div className="relative z-20 w-full aspect-[3/4] md:aspect-auto md:h-[50vh] flex items-center justify-center mb-6">
                 {cards.map((card, index) => {
@@ -129,10 +152,16 @@ const About: React.FC = () => {
                     </p>
                 </motion.div>
             </div>
-        </div>
+        </motion.div>
 
         {/* 3. Right Text */}
-        <div className="animate-in fade-in slide-in-from-top-8 duration-700 delay-600 fill-mode-backwards lg:self-start lg:-mt-24">          <ToolStack />
+        <motion.div
+          variants={entranceVariants}
+          initial="hidden"
+          animate="visible"
+          className="lg:self-start lg:-mt-24"
+        >
+          <ToolStack />
           <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
             What i've come to love most is the whole journey of sitting with a problem, understanding 
             the people in it, then crafting something that just feels right. 
@@ -141,10 +170,10 @@ const About: React.FC = () => {
             From all of that, i came to love the craft just as much as 
             the conversations that shaped it.
           </p>
-          <div className="mt-4"> {/* Adjust the number (8, 10, 12) to get the gap you want */}
-          <ConnectIcons />
+          <div className="mt-4">
+            <ConnectIcons />
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </div>
@@ -152,7 +181,7 @@ const About: React.FC = () => {
 };
 
 // ---------------------------------------------------------
-// REPAIRED CARD COMPONENT (Mobile & Desktop Compatible)
+// CARD COMPONENT
 // ---------------------------------------------------------
 
 interface CardProps {
@@ -181,7 +210,6 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
 
   const position = getPosition(index);
 
-  // Unified Like Handler (Animation + State)
   const triggerLike = () => {
     onLike();
     setShowBigHeart(true);
@@ -189,7 +217,6 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
     clickTimeoutRef.current = setTimeout(() => setShowBigHeart(false), 800);
   };
 
-  // Mobile-safe Double Tap Detection
   const handleTap = () => {
     if (!isFront) return;
     const now = Date.now();
@@ -197,7 +224,7 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
 
     if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
       triggerLike();
-      lastTapRef.current = 0; // Reset
+      lastTapRef.current = 0;
     } else {
       lastTapRef.current = now;
     }
@@ -209,10 +236,7 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
       dragElastic={0.6} 
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} 
       dragSnapToOrigin={true}
-      
-      // Use onTap for mobile compatibility instead of onDoubleClick
       onTap={handleTap} 
-
       animate={{
         x: position.x,
         y: position.y,
@@ -221,21 +245,17 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
         zIndex: position.zIndex,
         opacity: position.opacity
       }}
-      
       transition={{ 
         type: "spring", stiffness: 200, damping: 20,
         opacity: { duration: 0.2 } 
       }}
-
       whileTap={{ cursor: "grabbing" }}
-      onDragEnd={(e, info) => {
+      onDragEnd={(_e, info) => {
         const threshold = 100;
         if (Math.abs(info.offset.x) > threshold || Math.abs(info.offset.y) > threshold) {
           onSwipe();
         }
       }}
-
-      // touch-action: none prevents the browser from zooming on double tap
       style={{ touchAction: 'none' }}
       className={`absolute w-[85%] h-[90%] rounded-xl shadow-lg select-none overflow-hidden bg-white ${isFront ? 'cursor-grab' : ''}`}
     >
@@ -244,17 +264,14 @@ const Card = ({ card, index, onSwipe, isLiked, onLike }: CardProps) => {
         alt={card.title} 
         className="w-full h-full object-cover pointer-events-none"
         style={{
-          // default to scale(1) and translate(0,0) if no values are provided
           transform: `scale(${card.imgScale || 1}) translate(${card.imgX || '0px'}, ${card.imgY || '0px'})`,
-          // Optional: smooth transition if you plan to change these dynamically later
           transition: 'transform 0.3s ease' 
         }}
       />
 
-      {/* Heart Indicator - Now clickable on single tap */}
       <div 
         onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering the card's tap logic
+            e.stopPropagation();
             triggerLike();
         }}
         className="absolute top-4 right-4 z-10 p-2 cursor-pointer transition-transform active:scale-90"

@@ -1,171 +1,129 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const WORKS = [
-  { id: 1, src: '/images/labproject.webp', rotate: -3, offset: '0px', delay: 0.1, title: 'Project Alpha', desc: 'Minimal typography.' },
-  { id: 2, src: '/images/labproject.webp', rotate: 2, offset: '40px', delay: 0.2, title: 'Project Beta', desc: 'Color theory study.' },
-  { id: 3, src: '/images/labproject.webp', rotate: -2, offset: '-20px', delay: 0.3, title: 'Project Gamma', desc: '3D experiments.' },
-  { id: 4, src: '/images/labproject.webp', rotate: 4, offset: '30px', delay: 0.4, title: 'Project Delta', desc: 'UI/UX interface.' },
-  { id: 5, src: '/images/labproject.webp', rotate: -1, offset: '10px', delay: 0.5, title: 'Project Epsilon', desc: 'Generative code.' },
+  { id: 1, src: '/projects/lab1.webp', type: 'image', title: 'Project Alpha', desc: 'Minimal typography.' },
+  { id: 2, src: '/projects/lab2.webp', type: 'image', title: 'Project Beta', desc: 'Color theory study.' },
+  { id: 3, src: '/projects/lab3.MP4', type: 'video', title: 'Project Gamma', desc: '3D experiments.' },
+  { id: 4, src: '/projects/lab4.webp', type: 'image', title: 'Project Delta', desc: 'UI/UX interface.' },
+  { id: 5, src: '/projects/lab5.MP4', type: 'video', title: 'Project Epsilon', desc: 'Generative code.' },
+  { id: 6, src: '/projects/lab6.MP4', type: 'video', title: 'Project Zeta', desc: 'Motion dynamics.' },
+  { id: 7, src: '/projects/lab7.webp', type: 'image', title: 'Project Eta', desc: 'Grid system exploration.' },
+  { id: 8, src: '/projects/lab8.MP4', type: 'video', title: 'Project Theta', desc: 'Interactive elements.' },
 ];
 
 const Lab: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  // Simple check to handle logic differences
-  useEffect(() => {
-    const checkWidth = () => setIsDesktop(window.innerWidth >= 1024);
-    checkWidth();
-    window.addEventListener('resize', checkWidth);
-    return () => window.removeEventListener('resize', checkWidth);
-  }, []);
+  const selected = WORKS.find(w => w.id === selectedId) ?? null;
 
   return (
-    <div className="relative flex flex-col w-full min-h-screen bg-transparent px-4 lg:px-0 pt-0 lg:pt-4 pb-32 overflow-y-auto overflow-x-hidden">
-      
-      <div className="shrink-0 z-10">
+    // 1. Allow vertical scrolling on mobile (`overflow-y-auto`), but lock it on desktop (`lg:overflow-hidden`)
+    <div className="relative flex flex-col justify-start pt-8 lg:pt-4 gap-6 lg:gap-8 h-screen w-full px-4 lg:px-0 overflow-y-auto lg:overflow-hidden">
+
+      <div className="shrink-0 z-10 lg:pl-12">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
           Lab
         </h1>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto flex-grow">
-        {/* Mobile: Flex Column (Straight), Desktop: Row (Messy) */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:flex-wrap items-center lg:items-start justify-center lg:gap-6">
-          
-          {WORKS.map((work) => {
-            const isSelected = selectedId === work.id;
+      {/* Adjusted negative margin so mobile header has breathing room, but desktop stays centered */}
+      <main className="w-full max-w-7xl mx-auto flex-grow flex items-center justify-center mt-4 lg:-mt-24">
+        
+        {/* 2. Responsive Grid: 2 columns on mobile, 4 columns on desktop. Adjusted gap sizing for both. */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-x-4 gap-y-10 lg:gap-x-12 lg:gap-y-16 items-center justify-items-center w-full pb-16 lg:pb-8">
 
-            return (
-              <div 
-                key={work.id} 
-                className="relative z-10 w-full max-w-md lg:w-[12vw]"
-                // Only apply the messy offset on Desktop
-                style={{ marginTop: isDesktop ? work.offset : '0px' }} 
-              >
-                <motion.div
-                  layoutId={`card-${work.id}`}
-                  onClick={() => setSelectedId(isSelected ? null : work.id)}
-                  
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  
-                  // Mobile: No rotation, scale 1. Desktop: Messy rotation.
-                  animate={{ 
-                    rotate: isDesktop ? work.rotate : 0, 
-                    scale: 1,
-                    zIndex: isSelected && !isDesktop ? 20 : 10 // Bring to front on mobile click
-                  }}
-                  
-                  // Hover only active on Desktop
-                  whileHover={isDesktop ? { 
-                    rotate: 0, 
-                    scale: 1.05, 
-                    zIndex: 30 
-                  } : {}}
-                  
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  
-                  className="
-                    relative cursor-pointer group
-                    w-full aspect-[3/4] 
-                    bg-white rounded-sm overflow-hidden shadow-md border border-cool-200
-                  "
-                >
-                  <img src={work.src} alt="" className="w-full h-full object-cover" />
-
-                  {/* === MOBILE "ART NOTE" OVERLAY === */}
-                  {/* This only shows if NOT desktop and IS selected */}
-                  <AnimatePresence>
-                    {!isDesktop && isSelected && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-20 flex flex-col justify-end p-6 bg-white/80 backdrop-blur-[2px]"
-                      >
-                         <motion.div
-                           initial={{ y: 10, opacity: 0 }}
-                           animate={{ y: 0, opacity: 1 }}
-                           transition={{ delay: 0.1 }}
-                         >
-                            <span className="text-xs font-mono uppercase tracking-widest text-gray-500 mb-1 block">
-                                No. 0{work.id}
-                            </span>
-                            <h3 className="text-2xl font-serif text-gray-900 leading-tight mb-2">
-                                {work.title}
-                            </h3>
-                            <p className="text-sm font-light text-gray-700 leading-relaxed">
-                                {work.desc}
-                            </p>
-                         </motion.div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                </motion.div>
+          {WORKS.map((work) => (
+            <div
+              key={work.id}
+              className="relative z-10 flex justify-center items-center w-full h-full cursor-zoom-in"
+              onClick={() => setSelectedId(work.id)}
+            >
+              <div className="transition-opacity hover:opacity-75 duration-300 w-full flex justify-center">
+                {work.type === 'video' ? (
+                  <video
+                    src={work.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    // 3. Mobile: Let width fill the 2-col cell. Desktop: Lock to max-height to preserve natural ratios.
+                    className="w-full lg:w-auto h-auto max-h-[20vh] lg:max-h-[23vh] object-contain"
+                  />
+                ) : (
+                  <img
+                    src={work.src}
+                    alt={work.title}
+                    className="w-full lg:w-auto h-auto max-h-[20vh] lg:max-h-[23vh] object-contain"
+                  />
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
 
         </div>
       </main>
-      
-      {/* === DESKTOP EXPANDED OVERLAY === */}
-      {/* Wrapped in isDesktop check so it never fires on mobile */}
+
+      {/* === MODAL OVERLAY (Unchanged) === */}
       <AnimatePresence>
-        {selectedId && isDesktop && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            
+        {selected && (
+          <>
             <motion.div
+              key="backdrop"
+              className="fixed inset-0 z-50 bg-black/70 cursor-zoom-out"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
               onClick={() => setSelectedId(null)}
-              className="absolute inset-0 bg-black/40 backdrop-blur-md"
             />
 
-            {WORKS.map(work => (
-              work.id === selectedId && (
-                <div key={work.id} className="relative z-10 flex flex-row items-center gap-8 pointer-events-none">
-                  
-                  <motion.div
-                    layoutId={`card-${work.id}`}
-                    animate={{ rotate: 0, scale: 1, zIndex: 50 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                    className="
-                      h-64 lg:h-80 aspect-[3/4] 
-                      bg-white rounded-sm overflow-hidden shadow-2xl 
-                      pointer-events-auto cursor-pointer
-                    "
-                    onClick={() => setSelectedId(null)}
-                  >
-                     <img src={work.src} alt="" className="w-full h-full object-cover" />
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10, transition: { duration: 0.1 } }}
-                    transition={{ delay: 0.1 }}
-                    className="w-64 text-left pointer-events-auto"
-                  >
-                    <h2 className="text-2xl font-serif text-white mb-2">{work.title}</h2>
-                    <p className="text-gray-200 text-sm font-light leading-relaxed">
-                      {work.desc}
-                    </p>
-                  </motion.div>
-
-                </div>
-              )
-            ))}
-          </div>
+            <motion.div
+              key={`modal-${selected.id}`}
+              className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              <div
+                className="pointer-events-auto cursor-zoom-out p-4"
+                onClick={() => setSelectedId(null)}
+              >
+                {selected.type === 'video' ? (
+                  <video
+                    src={selected.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                      display: 'block',
+                      width: 'auto',
+                      height: 'auto',
+                      maxHeight: '85vh',
+                      maxWidth: '90vw',
+                      objectFit: 'contain',
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={selected.src}
+                    alt={selected.title}
+                    style={{
+                      display: 'block',
+                      width: 'auto',
+                      height: 'auto',
+                      maxHeight: '85vh',
+                      maxWidth: '90vw',
+                      objectFit: 'contain',
+                    }}
+                  />
+                )}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-
-      <div className="h-20 lg:hidden" />
     </div>
   );
 };

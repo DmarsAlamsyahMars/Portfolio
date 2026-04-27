@@ -4,6 +4,7 @@ export interface ProjectData {
   size: string;
   delay: string;
   image?: string;
+  folderImage?: string;
   imageClass?: string;
   titleClass?: string;
   link?: string;
@@ -13,13 +14,25 @@ export interface ProjectData {
     tags?: string[];
     introText?: string;
     sideImage?: string;
+    sideImages?: string[];
     sideText?: string;
+    phases?: string[];
+    roleFlows?: {
+      role: string;
+      features: string;
+    }[];
     fullImage?: string;
     narrative?: string;
     description?: string; 
     narrativeSections?: {
       paragraph: string;
       image?: string;
+    }[];
+    // Add this new property for the WJDM layout
+    verticalSplit?: {
+      image: string;
+      text: string;
+      boxText: string;
     }[];
   };
 }
@@ -32,6 +45,7 @@ export const PROJECTS: ProjectData[] = [
     size: "col-span-1 md:col-span-3 md:row-span-1", 
     delay: "delay-[100ms]",
     image: "/laptopcherrie.webp",
+    folderImage: "/cherriefolder.webp",
     imageClass: "object-top scale-100 translate-y-[20%]",
     titleClass: "-translate-y-3"
   },
@@ -42,6 +56,7 @@ export const PROJECTS: ProjectData[] = [
     size: "col-span-1 md:col-span-4 md:row-span-1", 
     delay: "delay-[200ms]",
     image: "/laptopmaison.webp",
+    folderImage: "/maisonfolder.webp",
     imageClass: "object-top scale-100 translate-y-[20%]",
     titleClass: "-translate-y-3"
   },
@@ -50,7 +65,8 @@ export const PROJECTS: ProjectData[] = [
     title: "WJDM",
     size: "col-span-1 md:col-span-3 md:row-span-1", 
     delay: "delay-[300ms]",
-    image: "/wjdm2.webp", // <-- Added
+    image: "/wjdmhero.webp",
+    folderImage: "/wjdmfolder.webp",
     titleClass: "-translate-y-3",
     modalContent: {
       description: "A minimalistic approach to digital design, focusing on clean typography and spacious layouts.",
@@ -58,25 +74,10 @@ export const PROJECTS: ProjectData[] = [
       year: "Nov 2025 - Feb 2026",
       tags: ["Figma", "PHP", "JavaScript", "PostgreSQL"],
       introText: "My first professional experience. Placed in the the Bureau of Goods and Services Procurement.",
-      sideImage: "/delulualbum.webp",
+      sideImage: "/wjdmfull.webp",
       sideText: "West Java's procurement landscape had a fragmentation problem. General users which spans over a wide range of age group, had to navigate up to five separate websites just to complete a process. This led to recurring issues, such as UMKM Owners registering in the wrong regional marketplace or misinformation. WJDM was the proposed answer, a single, integrated platform built specifically for the West Java region.",
-      fullImage: "/delulualbum.webp", 
-      narrativeSections: [
-        {
-          paragraph: "Initially requested to make a fully functional web system, though due to the limited amount of time, i proposed to focus on making a high-fidelity prototype. The prototype was a clear and presentable vision of what the integrated platform could look like. The idea was approved, and the work began."
-        },
-        {
-          paragraph: "The first month was spent learning. Old laws, new laws, procurement regulations, UMKM policy. To fully understand the legal and operational context before touching a single frame in Figma. From there, the concepting and protoyping phase began.",
-          image: "https://placehold.co/1200x600/E5E7EB/9CA3AF/webp?text=Placeholder+Image+1"
-        },
-        {
-          paragraph: "The building phase then progresseed incrementally. I developed the features in structured iterations, presenting each increment, and incorporating feedback along the way. The final prototype was presented to the head of the bureau. It was approved with one addition which was a roadmap display feature. Since it was feasible, it got done. That final feature became the last deliverable of the internship, and it was signed off.",
-          image: "https://placehold.co/1200x600/E5E7EB/9CA3AF/webp?text=Placeholder+Image+2"
-        },
-        {
-          paragraph: "Working inside a government environment as a college student back then was its own kind of learning. Most colleagues were of different generations, much higher position and more experienced than myself, some workflows were still manual, and the pace was different from anything academic. Adapting to that and still delivering something that got approved is something I carry forward."
-        }
-      ]
+      phases: ["Requested to build a full web system", "Agreed to focus on a high-fidelity prototype", "research & legal context", "Concepting & prototyping", "Incremental builds with feedback loops", "Final prototype presented to head of bureau", "Roadmap feature built & signed off"],
+      narrative: "Working inside a government environment as a college student back then was its own kind of learning. Most colleagues were of different generations, much higher position and more experienced than myself, some workflows were still manual, and the pace was different from anything academic. Adapting to that and still delivering something that got approved is something I carry forward."
     }
   },
   { 
@@ -85,6 +86,7 @@ export const PROJECTS: ProjectData[] = [
     size: "col-span-1 md:col-span-4 md:row-span-1", 
     delay: "delay-[400ms]",
     image: "/camilan.webp",
+    folderImage: "/camilanfolder.webp",
     titleClass: "-translate-y-3",
     modalContent: {
       role: "Packaging Design",
@@ -102,12 +104,35 @@ export const PROJECTS: ProjectData[] = [
     title: "The Room 19",
     size: "col-span-1 md:col-span-6 md:row-span-1", 
     delay: "delay-[500ms]",
-    image: "/theroom.webp", // <-- Added
+    image: "/theroom.webp",
+    folderImage: "/theroomfolder.webp",
     titleClass: "-translate-y-3",
     modalContent: {
       description: "Website development for the staff management and staff attendance module at The Room 19 Library Bandung.",
       role: "Full-Stack Developer",
-      year: "2025"
+      year: "2025",
+      tags: ["React", "Node.js", "Tailwind CSS"], // Add your actual tech stack here
+      introText: "A comprehensive internal tool to streamline staff operations.",
+      sideImages: [
+        "/tr1.webp", 
+        "/tr3.webp", 
+        "/tr4.webp", 
+        "/tr6.webp"
+      ],
+      sideText: "The Room 19 needed a dedicated platform to handle internal logistics. The challenge was creating a system that served two very different user groups: the administrators managing the operations, and the staff logging their daily activities.",
+      roleFlows: [
+        {
+          role: "Admin Dashboard",
+          features: "Manage staff accounts, assign shifts, oversee attendance, and export monthly reports."
+        },
+        {
+          role: "Staff Portal",
+          features: "Daily clock-in/out, view personal attendance history, and request time off."
+        }
+      ],
+      narrative: "Structuring the database to handle these distinct permission levels was a great exercise in security and role-based access control. The final product replaced their manual tracking methods entirely."
+      
     }
+    
   }
 ];

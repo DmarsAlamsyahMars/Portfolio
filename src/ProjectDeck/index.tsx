@@ -12,7 +12,7 @@ interface ProjectDeckProps {
 }
 
 const SmoothScroll = ({ scrollRef, targetScroll }: { scrollRef: React.MutableRefObject<number>, targetScroll: React.MutableRefObject<number> }) => {
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     scrollRef.current = THREE.MathUtils.damp(scrollRef.current, targetScroll.current, 3, delta);
   });
   return null;
@@ -20,15 +20,23 @@ const SmoothScroll = ({ scrollRef, targetScroll }: { scrollRef: React.MutableRef
 
 const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
   const scrollRef = useRef(0);
-  const targetScroll = useRef(3.5); 
+  const targetScroll = useRef(3.5);
   const [ready, setReady] = useState(false);
-  
-  // --- NEW DRAG LOGIC ---
-  const isDragging = useRef(false);       // Controls camera zoom and card hovers
-  const isPointerDown = useRef(false);    // Tracks physical mouse button state
+
+  // Camera/hover drag state — delayed 150ms like before
+  const isDragging = useRef(false);
+  const isPointerDown = useRef(false);
   const dragTimer = useRef<number | null>(null);
   const lastY = useRef(0);
-  const startY = useRef(0);               // Tracks where the click started
+  const startY = useRef(0);
+
+  // Separate: cumulative movement tracker for click suppression
+  // This is the key addition — it accumulates total px moved, never resets mid-drag
+  const totalMovement = useRef(0);
+
+  // CLICK_SUPPRESS_THRESHOLD: how many total pixels of movement = "this was a drag, not a click"
+  // 6px is tight enough to allow intentional clicks, loose enough to catch slow drags
+  const CLICK_SUPPRESS_THRESHOLD = 6;
 
   const handleWheel = (e: React.WheelEvent) => {
     targetScroll.current += e.deltaY * SCROLL_SPEED;
@@ -38,8 +46,8 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
     isPointerDown.current = true;
     lastY.current = e.clientY;
     startY.current = e.clientY;
+    totalMovement.current = 0; // reset accumulator for new gesture
 
-    // Delay the "drag/zoom" state by 150ms
     dragTimer.current = setTimeout(() => {
       if (isPointerDown.current) {
         isDragging.current = true;
@@ -49,16 +57,23 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isPointerDown.current) return;
-    
-    // If they move the mouse > 10px quickly, force drag state immediately
+
+    const deltaY = e.clientY - lastY.current;
+    totalMovement.current += Math.abs(deltaY); // accumulate — no negatives cancel positives
+
+    // Fast movement: immediately enter drag state (existing behaviour)
     if (!isDragging.current && Math.abs(e.clientY - startY.current) > 10) {
-       if (dragTimer.current) clearTimeout(dragTimer.current);
-       isDragging.current = true;
+      if (dragTimer.current) clearTimeout(dragTimer.current);
+      isDragging.current = true;
     }
 
-    // Only apply scroll if we are officially dragging
+    // Slow movement: enter drag state once threshold is crossed
+    if (!isDragging.current && totalMovement.current > CLICK_SUPPRESS_THRESHOLD) {
+      if (dragTimer.current) clearTimeout(dragTimer.current);
+      isDragging.current = true;
+    }
+
     if (isDragging.current) {
-      const deltaY = e.clientY - lastY.current;
       targetScroll.current += deltaY * DRAG_SPEED;
       lastY.current = e.clientY;
     }
@@ -68,12 +83,20 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
     if (dragTimer.current) clearTimeout(dragTimer.current);
     isPointerDown.current = false;
     isDragging.current = false;
+    // Note: totalMovement is NOT reset here — it's read by cards during the click
+    // event which fires synchronously after pointerup. Reset happens on next pointerdown.
+  };
+
+  // Wrap onCardClick to gate on totalMovement
+  // Cards call this instead of onCardClick directly
+  const handleCardClick = (tab: string) => {
+    if (totalMovement.current > CLICK_SUPPRESS_THRESHOLD) return;
+    onCardClick?.(tab);
   };
 
   return (
-    <div 
+    <div
       className={`absolute inset-0 w-full h-full touch-none transition-opacity duration-1000 ${ready ? 'opacity-100' : 'opacity-0'}`}
-      // Swap cursor based on dragging state dynamically
       style={{ cursor: isPointerDown.current ? 'grabbing' : 'grab' }}
       onWheel={handleWheel}
       onPointerDown={handlePointerDown}
@@ -89,25 +112,25 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
         <CameraRig isDragging={isDragging} />
         <PerspectiveCamera makeDefault position={[5.5, 7, 11]} fov={32} />
         <Environment preset="warehouse" background={false} blur={0.6} />
-        <ambientLight intensity={1.2} /> 
+        <ambientLight intensity={1.2} />
         <spotLight position={[-15, 20, 15]} angle={0.3} penumbra={1} intensity={2} />
-        
+
         <SmoothScroll scrollRef={scrollRef} targetScroll={targetScroll} />
 
-        <group position={[0, 0, 0]}> 
+        <group position={[0, 0, 0]}>
           {PROJECTS.map((proj, i) => (
-            <Card 
-              key={i} 
-              index={i} 
-              scrollRef={scrollRef} 
-              isDragging={isDragging} 
-              onCardClick={onCardClick} 
-              {...proj} 
+            <Card
+              key={i}
+              index={i}
+              scrollRef={scrollRef}
+              isDragging={isDragging}
+              onCardClick={handleCardClick}
+              {...proj}
             />
           ))}
         </group>
       </Canvas>
-      
+
       <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
       <div className="absolute inset-0 z-10 pointer-events-none bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.7)_0%,transparent_25%)]" />
       <div className="absolute bottom-6 right-6 text-[10px] font-mono text-slate-400 select-none pointer-events-none opacity-60 z-20">

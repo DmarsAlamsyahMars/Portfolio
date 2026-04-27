@@ -1,10 +1,17 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /* 1rem top, 1rem sides, 0 bottom for mobile */
+  padding: 1rem 1rem 0 1rem; 
   text-align: center;
 }
 
+@media (min-width: 768px) {
+  #root {
+    /* Restore standard even padding for desktop */
+    padding: 2rem; 
+  }
+}
 .logo {
   height: 6em;
   padding: 1.5em;

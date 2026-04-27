@@ -7,32 +7,9 @@ import About from './About';
 import Lab from './Lab';
 import Archive from './Archive';
 
-
-// UPDATED: The "Database" of Collectibles with new order and types
-const ARCHIVE_DATABASE = [
-  // 1. Looping Video
-  { id: 1, type: 'video', src: '/archive1.mp4' }, 
-  // 2. Testimonial 1
-  { id: 2, type: 'text', quote: "An absolute joy to work with. Brought our vision to life seamlessly!", name: "Sarah Jenkins", role: "Product Manager" },
-  // 3. Switching Card (Special Collectible)
-  { id: 3, type: 'switching-card', srcFront: '/archive3b.webp', srcBack: '/archive3a.webp' },
-  // 4. Testimonial 2
-  { id: 4, type: 'text', quote: "Having Dmars as the lead creative in charge was a huge relief as I could fully trust his visual direction which he consistently delivered with a sharp creative eye", name: "Amelia", role: "Captain of IOSBC" },
-  // 5. Testimonial 3
-  { id: 5, type: 'text', quote: "The best interactive portfolio we've seen this year. Highly recommended.", name: "Emily Rodriguez", role: "Creative Director" },
-];
-
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Home');
-  const [collectedArchives, setCollectedArchives] = useState<any[]>([]); 
-
   const isHome = activeTab === 'Home';
-
-  const handleCatchUFO = () => {
-    if (collectedArchives.length < ARCHIVE_DATABASE.length) {
-      setCollectedArchives(prev => [...prev, ARCHIVE_DATABASE[prev.length]]);
-    }
-  };
 
   return (
     <main 
@@ -62,7 +39,7 @@ const App: React.FC = () => {
             {activeTab === 'About' && <About />}
             {activeTab === 'Projects' && <Projects />}
             {activeTab === 'Lab' && <Lab />}
-            {activeTab === 'Archive' && <Archive items={collectedArchives} />}
+            {activeTab === 'Archive' && <Archive />}
          </div>
       )}
 

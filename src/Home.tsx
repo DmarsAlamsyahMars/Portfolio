@@ -163,10 +163,10 @@ const Home: React.FC<HomeProps> = ({ setTab }) => {
   const animStyle = { animationFillMode: 'backwards' } as React.CSSProperties;
 
   return (
-    <div className="flex flex-col gap-6 lg:gap-6 h-auto lg:h-[calc(100vh-6rem)] w-full pb-32 lg:pb-8">
+    <div className="flex flex-col gap-6 lg:gap-6 h-auto lg:h-[calc(100vh-6rem)] w-full pb-0 lg:pb-8">
       
       {/* 1. Header Text Section */}
-      <div className="flex flex-col gap-6 text-[32px] lg:text-[41px] leading-[1.3] shrink-0">          
+      <div className="flex flex-col gap-6 text-[32px] lg:text-[41px] leading-[1.3] shrink-0 -mt-8 lg:mt-0">        
         
         {/* PARAGRAPH 1: Delay 0ms */}
         <p className={`text-cool-900/40 ${animClass}`}>

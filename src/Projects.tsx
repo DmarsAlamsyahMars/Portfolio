@@ -1,118 +1,161 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PROJECTS, type ProjectData } from './data/projectsData'; 
-import ProjectModal from './ProjectModal'; 
-
-// THE KOWALSKI SPRING: Fast entrance, real-world friction, zero robotic easing.
-// This MUST be identical in both files.
-const sharedSpring = { type: "spring", stiffness: 400, damping: 30, mass: 0.8 } as const;
+import React, { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion, useMotionValue, useSpring } from 'framer-motion';
+import { PROJECTS, type ProjectData } from './data/projectsData';
+import ProjectModal from './ProjectModal';
 
 const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [hoveredText, setHoveredText] = useState<string | null>(null);
+
+  const isTouchDevice = useRef(
+    typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
+  );
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 300 };
+  const cursorX = useSpring(mouseX, springConfig);
+  const cursorY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX + 15);
+      mouseY.set(e.clientY + 15);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  const renderItem = (project: ProjectData) => {
+    const hoverTextMap: Record<string | number, string> = {
+      1: "visit Cherrie",
+      2: "visit Maison des Rêves",
+      3: "internship",
+      4: "product design",
+      5: "thesis project"
+    };
+
+    const hoverLabel = hoverTextMap[project.id] || `View ${project.title}`;
+
+    const hoverProps = isTouchDevice.current
+      ? {}
+      : {
+          onMouseEnter: () => setHoveredText(hoverLabel),
+          onMouseLeave: () => setHoveredText(null),
+        };
+
+    // iOS-style spring entrance: fade + subtle rise + gentle bounce
+    const entranceVariants = {
+      hidden: {
+        opacity: 0,
+        y: -24,
+        scale: 0.94,
+      },
+      visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+          type: 'spring' as const,
+          stiffness: 260,
+          damping: 22,
+          mass: 0.8,
+        },
+      },
+    };
+
+    const img = (
+      <img
+        src={project.folderImage}
+        alt={project.title}
+        className="w-60 h-60 lg:w-45 lg:h-45 object-contain drop-shadow-xl"
+      />
+    );
+
+    const content = project.link ? (
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block hover:scale-105 hover:-translate-y-2 transition-all duration-200"
+        {...hoverProps}
+      >
+        {img}
+      </a>
+    ) : (
+      <button
+        onClick={() => setSelectedProject(project)}
+        className="hover:scale-105 hover:-translate-y-2 transition-all duration-200"
+        {...hoverProps}
+      >
+        {img}
+      </button>
+    );
+
+    return (
+      <motion.div
+        key={project.id}
+        variants={entranceVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {content}
+      </motion.div>
+    );
+  };
 
   return (
-    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 relative overflow-hidden">
-      
-      {/* Header */}
-      <div className="shrink-0 z-10">
-        <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
-          Selected Projects
-        </h1>
-      </div>
+    <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-2 lg:gap-4 min-h-[100dvh] w-full px-4 lg:px-0 pb-6 lg:pb-12 relative">
 
-      {/* Grid Container */}
-      <div className="grid grid-cols-1 md:grid-cols-10 md:grid-rows-2 gap-2 w-full h-[60vh] z-0">
-        {PROJECTS.map((project) => {
-          const isExternal = !!project.link;
-          const Component = isExternal ? motion.a : motion.button;
-          
-          const dynamicProps = isExternal 
-            ? { href: project.link, target: "_blank", rel: "noopener noreferrer" }
-            : { onClick: () => setSelectedProject(project) };
+      <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif shrink-0">
+        Selected Projects
+      </h1>
 
-          // Snappy asymmetric hover states
-          const titleVariants = {
-            rest: { 
-              opacity: isExternal ? 1 : 0, 
-              y: isExternal ? 0 : 8 
-            },
-            hover: { 
-              opacity: 1, 
-              y: 0,
-              transition: { duration: 0.15 } // Fast response on hover
-            }
-          };
+      <div className="flex flex-col items-center gap-2 lg:gap-3">
+        {/* Mobile layout: 1x5 vertical column */}
+        <div className="flex flex-col items-center gap-4 lg:hidden">
+          {PROJECTS.map((project) => renderItem(project))}
+        </div>
 
-          const imageVariants = {
-            rest: { y: 0, scale: 1 },
-            hover: isExternal ? { scale: 1.05, transition: { duration: 0.2 } } : { y: 32, transition: { duration: 0.2 } }
-          };
-
-          return (
-            // 1. THE SKELETON WRAPPER
-            // This holds the grid structure and CSS animations so they don't interfere with Framer Motion.
-            <div 
-              key={project.id} 
-              className={`
-                ${project.size} 
-                ${project.delay} 
-                animate-in fade-in slide-in-from-top-8 [animation-duration:700ms]
-                w-full h-full
-              `}
-              style={{ animationFillMode: 'backwards' }}
-            >
-              <Component
-                layoutId={`card-${project.id}`} 
-                transition={sharedSpring}
-                {...dynamicProps as any} 
-                initial="rest"
-                whileHover="hover"
-                animate="rest"
-                // 2. THE MORPHING ELEMENT
-                // Cleaned of CSS animations, set to full width/height of the wrapper
-                className="relative group cursor-pointer bg-cool-100 rounded-lg overflow-hidden w-full h-full block"
-              >
-                {/* TITLE LAYER */}
-                <div className={`absolute top-4 left-4 ${isExternal ? 'z-30' : 'z-10'} ${project.titleClass || ''}`}>
-                  <motion.span 
-                    layoutId={`title-${project.id}`} 
-                    transition={sharedSpring}
-                    variants={titleVariants}
-                    className="text-lg-40 font-sans text-cool-400 font-medium block"
-                  >
-                    {project.title}
-                  </motion.span>
-                </div>
-
-                {/* IMAGE LAYER */}
-                {project.image && (
-                  <motion.img 
-                    layoutId={`image-${project.id}`} 
-                    transition={sharedSpring}
-                    variants={imageVariants}
-                    src={project.image} 
-                    alt={`${project.title} preview`} 
-                    className={`
-                      absolute inset-0 w-full h-full object-cover z-20
-                      ${project.imageClass || ''}
-                    `}
-                  />
-                )}
-              </Component>
-            </div>
-          );
-        })}
+        {/* Desktop layout: 3+2 rows */}
+        <div className="hidden lg:flex flex-col items-center gap-3">
+          <div className="flex gap-8 items-center">
+            {PROJECTS.slice(0, 3).map((project) => renderItem(project))}
+          </div>
+          <div className="flex gap-8 items-center pl-20">
+            {PROJECTS.slice(3).map((project) => renderItem(project))}
+          </div>
+        </div>
       </div>
 
       <AnimatePresence>
         {selectedProject && (
-          <ProjectModal 
-            project={selectedProject} 
-            onClose={() => setSelectedProject(null)} 
+          <ProjectModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
           />
         )}
       </AnimatePresence>
-      
+
+      {/* Floating Hover Text — mouse/desktop only */}
+      {!isTouchDevice.current && (
+        <div className="fixed top-0 left-0 pointer-events-none z-[100]">
+          <AnimatePresence>
+            {hoveredText && (
+              <motion.span
+                style={{ x: cursorX, y: cursorY }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute font-sans text-sm md:text-base font-medium text-cool-700 whitespace-nowrap"
+              >
+                {hoveredText}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };
