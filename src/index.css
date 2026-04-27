@@ -53,6 +53,15 @@
   --font-serif: "EBGaramond", "Georgia", "serif";
 }
 
+/* ─── Fix: Framer Motion blink on entrance animations ───────────────────────
+   Elements with a Framer `initial` prop are briefly visible at full opacity
+   before JS hydrates and applies the initial state — causing the "blink".
+   This ensures any element Framer will animate starts hidden immediately.  */
+[data-framer-appear-id],
+[style*="--motion-"] {
+  will-change: opacity, transform;
+}
+
 /* Global Reset */
 /* index.css */
 body, html {

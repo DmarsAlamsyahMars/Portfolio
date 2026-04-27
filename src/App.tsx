@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ProjectDeck from './ProjectDeck';
 import Navbar from './navbar';
 import Home from './Home'; 
@@ -10,9 +10,27 @@ import Archive from './Archive';
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Home');
   const isHome = activeTab === 'Home';
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Fix: Reset scroll on tab change — targets all possible scroll containers
+  // because iOS Safari and DevTools emulation often scroll window/documentElement
+  // instead of the <main> element, even with overflow-y: auto on it.
+  useEffect(() => {
+    // 1. The <main> element itself
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
+    // 2. window — covers DevTools mobile emulation + some Android browsers
+    window.scrollTo(0, 0);
+    // 3. document.documentElement — covers iOS Safari's true scroll root
+    document.documentElement.scrollTop = 0;
+    // 4. document.body — older iOS / edge case fallback
+    document.body.scrollTop = 0;
+  }, [activeTab]);
 
   return (
     <main 
+      ref={mainRef}
       className={`
         relative w-full bg-cool-50 p-4 gap-4 font-serif pb-32 lg:pb-4 flex flex-col 
         ${isHome ? 'lg:flex-row' : ''}

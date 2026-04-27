@@ -18,7 +18,7 @@ const Lab: React.FC = () => {
 
   return (
     // 1. Allow vertical scrolling on mobile (`overflow-y-auto`), but lock it on desktop (`lg:overflow-hidden`)
-    <div className="relative flex flex-col justify-start pt-8 lg:pt-4 gap-6 lg:gap-8 h-screen w-full px-4 lg:px-0 overflow-y-auto lg:overflow-hidden">
+    <div className="relative flex flex-col justify-start pt-8 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 lg:overflow-hidden lg:h-screen">
 
       <div className="shrink-0 z-10 lg:pl-12">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">

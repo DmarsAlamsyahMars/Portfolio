@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface NavbarProps {
   activeTab: string;
@@ -8,6 +8,22 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [isConnectOpen, setIsConnectOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // --- Scroll Lock Effect ---
+  useEffect(() => {
+  if (!isConnectOpen) return;
+
+  // Prevent touch scrolling on mobile
+  const preventScroll = (e: TouchEvent) => e.preventDefault();
+
+  document.body.style.overflow = 'hidden';
+  document.addEventListener('touchmove', preventScroll, { passive: false });
+
+  return () => {
+    document.body.style.overflow = '';
+    document.removeEventListener('touchmove', preventScroll);
+  };
+}, [isConnectOpen]);
 
   const navItems = ['Home', 'About', 'Projects', 'Lab'];
 
@@ -31,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
         onClick={() => setIsConnectOpen(false)}
       >
         <div
-          className="relative flex flex-col md:flex-row items-center gap-3 w-full max-w-xs md:max-w-none justify-center"
+          className="relative flex flex-col md:flex-row items-center gap-3 w-full max-w-[280px] md:max-w-none justify-center"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Email — copy to clipboard */}
@@ -41,16 +57,21 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           >
             {/* Email text — fades out when copied */}
             <span
-              className="flex items-center gap-2 transition-opacity duration-200"
-              style={{ opacity: copied ? 0 : 1 }}
+              className="flex items-center gap-2 transition-opacity duration-300 ease-in-out"
+              style={{ opacity: copied ? 0 : 1,
+              transitionDelay: copied ? '0ms' : '150ms'
+              }}
+              
             >
               dmarsalamsyah@gmail.com
             </span>
 
             {/* "Copied!" text — fades in when copied */}
             <span
-              className="absolute inset-0 flex items-center justify-center transition-opacity duration-200"
-              style={{ opacity: copied ? 1 : 0 }}
+              className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out delay-150"
+              style={{ opacity: copied ? 1 : 0,
+                transitionDelay: copied ? '150ms' : '0ms'
+               }}
               aria-hidden="true"
             >
               copied!
@@ -80,9 +101,8 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
       </div>
 
       {/* --- Navbar --- */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[70]">
-        <nav className="font-sans flex items-center gap-1 p-1 bg-cool-100/80 backdrop-blur-md border border-cool-200 rounded-lg shadow-sm transition-all duration-300">
-
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[70] w-[calc(100%-2rem)] max-w-max">
+        <nav className="font-sans flex items-center justify-center gap-1 p-1 bg-cool-100/80 backdrop-blur-md border border-cool-200 rounded-lg shadow-sm">
           {navItems.map((item) => (
             <button
               key={item}

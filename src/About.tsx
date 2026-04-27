@@ -100,7 +100,7 @@ const About: React.FC = () => {
           initial="hidden"
           animate="visible"
         >
-          <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+          <p className="text-cool-900/80 font-sans text-base lg:text-base leading-relaxed text-justify">
             I recently graduated in information systems, 
             where i found myself equally drawn to the logic 
             of coding and the craft of UI/UX, which stems 
@@ -162,7 +162,7 @@ const About: React.FC = () => {
           className="lg:self-start lg:-mt-24"
         >
           <ToolStack />
-          <p className="text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+          <p className="text-cool-900/80 font-sans text-base lg:text-base leading-relaxed text-justify">
             What i've come to love most is the whole journey of sitting with a problem, understanding 
             the people in it, then crafting something that just feels right. 
           </p>
