@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 const WORKS = [
   { id: 1, src: '/projects/lab1.webp', type: 'image', title: 'Project Alpha', desc: 'Minimal typography.' },
   { id: 2, src: '/projects/lab2.webp', type: 'image', title: 'Project Beta', desc: 'Color theory study.' },
-  { id: 3, src: '/projects/lab3.MP4', type: 'video', title: 'Project Gamma', desc: '3D experiments.' },
+  { id: 3, src: '/projects/lab3.webm', type: 'video', title: 'Project Gamma', desc: '3D experiments.' },
   { id: 4, src: '/projects/lab4.webp', type: 'image', title: 'Project Delta', desc: 'UI/UX interface.' },
-  { id: 5, src: '/projects/lab5.MP4', type: 'video', title: 'Project Epsilon', desc: 'Generative code.' },
-  { id: 6, src: '/projects/lab6.MP4', type: 'video', title: 'Project Zeta', desc: 'Motion dynamics.' },
+  { id: 5, src: '/projects/lab5.webm', type: 'video', title: 'Project Epsilon', desc: 'Generative code.' },
+  { id: 6, src: '/projects/lab6.webm', type: 'video', title: 'Project Zeta', desc: 'Motion dynamics.' },
   { id: 7, src: '/projects/lab7.webp', type: 'image', title: 'Project Eta', desc: 'Grid system exploration.' },
-  { id: 8, src: '/projects/lab8.MP4', type: 'video', title: 'Project Theta', desc: 'Interactive elements.' },
+  { id: 8, src: '/projects/lab8.webm', type: 'video', title: 'Project Theta', desc: 'Interactive elements.' },
 ];
 
 const Lab: React.FC = () => {
@@ -18,9 +18,9 @@ const Lab: React.FC = () => {
 
   return (
     // 1. Allow vertical scrolling on mobile (`overflow-y-auto`), but lock it on desktop (`lg:overflow-hidden`)
-    <div className="relative flex flex-col justify-start pt-8 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 lg:overflow-hidden lg:h-screen">
+    <div className="relative flex flex-col justify-start pt-0 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 lg:overflow-hidden lg:h-screen">
 
-      <div className="shrink-0 z-10 lg:pl-12">
+      <div className="shrink-0 z-10">
         <h1 className="text-5xl lg:text-7xl leading-none text-cool-900 font-serif">
           Lab
         </h1>

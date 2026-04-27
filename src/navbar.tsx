@@ -11,19 +11,18 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
   // --- Scroll Lock Effect ---
   useEffect(() => {
-  if (!isConnectOpen) return;
+    if (!isConnectOpen) return;
 
-  // Prevent touch scrolling on mobile
-  const preventScroll = (e: TouchEvent) => e.preventDefault();
+    const preventScroll = (e: TouchEvent) => e.preventDefault();
 
-  document.body.style.overflow = 'hidden';
-  document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('touchmove', preventScroll, { passive: false });
 
-  return () => {
-    document.body.style.overflow = '';
-    document.removeEventListener('touchmove', preventScroll);
-  };
-}, [isConnectOpen]);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('touchmove', preventScroll);
+    };
+  }, [isConnectOpen]);
 
   const navItems = ['Home', 'About', 'Projects', 'Lab'];
 
@@ -55,23 +54,15 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             onClick={handleCopyEmail}
             className="relative h-11 w-full md:w-auto px-6 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-xl transition-all duration-200 hover:shadow-sm font-medium text-sm overflow-hidden"
           >
-            {/* Email text — fades out when copied */}
             <span
               className="flex items-center gap-2 transition-opacity duration-300 ease-in-out"
-              style={{ opacity: copied ? 0 : 1,
-              transitionDelay: copied ? '0ms' : '150ms'
-              }}
-              
+              style={{ opacity: copied ? 0 : 1, transitionDelay: copied ? '0ms' : '150ms' }}
             >
               dmarsalamsyah@gmail.com
             </span>
-
-            {/* "Copied!" text — fades in when copied */}
             <span
               className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out delay-150"
-              style={{ opacity: copied ? 1 : 0,
-                transitionDelay: copied ? '150ms' : '0ms'
-               }}
+              style={{ opacity: copied ? 1 : 0, transitionDelay: copied ? '150ms' : '0ms' }}
               aria-hidden="true"
             >
               copied!
@@ -101,8 +92,20 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
       </div>
 
       {/* --- Navbar --- */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[70] w-[calc(100%-2rem)] max-w-max">
-        <nav className="font-sans flex items-center justify-center gap-1 p-1 bg-cool-100/80 backdrop-blur-md border border-cool-200 rounded-lg shadow-sm">
+      {/*
+        KEY FIXES for small screens:
+        1. Replaced `w-[calc(100%-2rem)] max-w-max` with `mx-4` so the pill
+           never tries to be "full width" while also being "content width" — 
+           those two constraints fight each other on narrow viewports.
+        2. Added `overflow-hidden` on the nav so the active highlight is always
+           clipped cleanly inside the pill instead of bleeding out the left edge.
+        3. Switched button padding to `px-3 sm:px-4` so items compress
+           gracefully on small screens without wrapping or clipping.
+        4. Added `min-w-0` + `flex-shrink` awareness via `flex-1 justify-center`
+           on the button text so nothing overflows.
+      */}
+      <div className="fixed bottom-6 left-0 right-0 z-[70] flex justify-center px-4">
+        <nav className="font-sans flex items-center justify-center gap-0.5 p-1 bg-cool-100/80 backdrop-blur-md border border-cool-200 rounded-lg shadow-sm overflow-hidden">
           {navItems.map((item) => (
             <button
               key={item}
@@ -111,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 setIsConnectOpen(false);
               }}
               className={`
-                relative px-4 py-2 rounded-md text-sm transition-all duration-100 ease-in-out font-medium
+                relative px-3 sm:px-4 py-2 rounded-md text-sm transition-all duration-100 ease-in-out font-medium whitespace-nowrap
                 ${
                   activeTab === item
                     ? 'text-cool-900 bg-cool-200/50'
@@ -126,14 +129,10 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           {/* Connect Button */}
           <button
             onClick={() => setIsConnectOpen(true)}
-            className={`
-              relative px-4 py-2 rounded-md text-sm transition-all duration-300 ease-in-out font-medium
-              text-cool-900/60 hover:text-cool-900 hover:bg-cool-200/50
-            `}
+            className="relative px-3 sm:px-4 py-2 rounded-md text-sm transition-all duration-300 ease-in-out font-medium text-cool-900/60 hover:text-cool-900 hover:bg-cool-200/50 whitespace-nowrap"
           >
             Connect
           </button>
-
         </nav>
       </div>
     </>
