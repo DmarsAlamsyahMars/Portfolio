@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 // MOVED FROM APP: The "Database" of Collectibles 
 const ARCHIVE_DATABASE = [
   { id: 1, type: 'video', src: '/archive1.mp4' }, 
-  { id: 2, type: 'text', quote: "An absolute joy to work with. Brought our vision to life seamlessly!", name: "Sarah Jenkins", role: "Product Manager" },
+  { id: 2, type: 'text', quote: "Mars communicates and works exceptionally well, helping us explore a web-based staff and attendance management system. His explanations are clear and open to feedback", name: "Reiza", role: "CEO of The Room 19" },
   { id: 3, type: 'switching-card', srcFront: '/archive3b.webp', srcBack: '/archive3a.webp' },
   { id: 4, type: 'text', quote: "Having Dmars as the lead creative in charge was a huge relief as I could fully trust his visual direction which he consistently delivered with a sharp creative eye", name: "Amelia", role: "Captain of IOSBC" },
-  { id: 5, type: 'text', quote: "The best interactive portfolio we've seen this year. Highly recommended.", name: "Emily Rodriguez", role: "Creative Director" },
+  { id: 5, type: 'text', quote: "Mars worked very well, his performance was good, very organized in carrying out his tasks, with satisfactory work results.", name: "Rudi Rinaldi", role: "Field Supervisor (Internship), PBJ West Java" },
 ];
 
 const Archive: React.FC = () => {

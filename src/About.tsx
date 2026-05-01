@@ -106,7 +106,7 @@ const About: React.FC = () => {
             of coding and the craft of UI/UX, which stems 
             from my love for graphic design.
           </p>
-          <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+          <p className="mt-4 text-cool-900/80 font-sans text-base leading-relaxed text-justify">
             Honestly, i think the best digital experiences happen when we allow logic and creative intuition to work side by side.
           </p>
           <div className="mt-8 lg:mt-6"></div>
@@ -166,7 +166,7 @@ const About: React.FC = () => {
             What i've come to love most is the whole journey of sitting with a problem, understanding 
             the people in it, then crafting something that just feels right. 
           </p>
-          <p className="mt-4 text-cool-900/80 font-sans text-sm lg:text-base leading-relaxed text-justify">
+          <p className="mt-4 text-cool-900/80 font-sans text-base leading-relaxed text-justify">
             From all of that, i came to love the craft just as much as 
             the conversations that shaped it.
           </p>
