@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// MOVED FROM APP: The "Database" of Collectibles 
 const ARCHIVE_DATABASE = [
   { id: 1, type: 'video', src: '/archive1.mp4' }, 
   { id: 2, type: 'text', quote: "Mars communicates and works exceptionally well, helping us explore a web-based staff and attendance management system. His explanations are clear and open to feedback", name: "Reiza", role: "CEO of The Room 19" },
@@ -11,7 +10,6 @@ const ARCHIVE_DATABASE = [
 
 const Archive: React.FC = () => {
   return (
-    // Kept the larger bottom padding to ensure navbar clearance
     <div className="flex flex-col justify-start pt-0 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 relative pb-12 lg:pb-32">
       
       {/* 1. Header Section */}
@@ -78,7 +76,6 @@ const VideoCard = ({ item, index }: { item: any, index: number }) => {
   return (
     <div 
       onClick={handleInteraction}
-      // Changed from aspect-square to aspect-[4/3] to shrink vertically
       className="col-span-1 aspect-[4/3] bg-cool-200 rounded-xl overflow-hidden shadow-sm animate-in zoom-in duration-500 cursor-pointer lg:cursor-default group relative"
       style={{ animationDelay: `${index * 100}ms` }}
     >
@@ -100,14 +97,12 @@ const VideoCard = ({ item, index }: { item: any, index: number }) => {
   );
 };
 
-// --- MINI COMPONENT: SWITCHING CARD ---
 const SwitchingCard = ({ item, index }: { item: any, index: number }) => {
   const [isSwapped, setIsSwapped] = useState(false);
 
   return (
     <div 
       onClick={() => setIsSwapped(!isSwapped)}
-      // Changed from aspect-square to aspect-[4/3] to shrink vertically
       className="col-span-1 aspect-[4/3] animate-in zoom-in duration-500 hover:scale-[1.03] transition-transform cursor-pointer group relative flex items-center justify-center overflow-visible"
       style={{ animationDelay: `${index * 100}ms` }}
     >

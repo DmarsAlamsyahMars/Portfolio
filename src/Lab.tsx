@@ -17,7 +17,6 @@ const Lab: React.FC = () => {
   const selected = WORKS.find(w => w.id === selectedId) ?? null;
 
   return (
-    // 1. Allow vertical scrolling on mobile (`overflow-y-auto`), but lock it on desktop (`lg:overflow-hidden`)
     <div className="relative flex flex-col justify-start pt-0 lg:pt-4 gap-6 lg:gap-8 min-h-screen w-full px-4 lg:px-0 lg:overflow-hidden lg:h-screen">
 
       <div className="shrink-0 z-10">
@@ -26,10 +25,10 @@ const Lab: React.FC = () => {
         </h1>
       </div>
 
-      {/* Adjusted negative margin so mobile header has breathing room, but desktop stays centered */}
+      {/* Adjusted negative margin*/}
       <main className="w-full max-w-7xl mx-auto flex-grow flex items-center justify-center mt-4 lg:-mt-24">
         
-        {/* 2. Responsive Grid: 2 columns on mobile, 4 columns on desktop. Adjusted gap sizing for both. */}
+        {/* Responsive Grid: 2 columns on mobile, 4 columns on desktop.*/}
         <div className="grid grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-x-4 gap-y-10 lg:gap-x-12 lg:gap-y-16 items-center justify-items-center w-full pb-16 lg:pb-8">
 
           {WORKS.map((work) => (
@@ -46,7 +45,6 @@ const Lab: React.FC = () => {
                     loop
                     muted
                     playsInline
-                    // 3. Mobile: Let width fill the 2-col cell. Desktop: Lock to max-height to preserve natural ratios.
                     className="w-full lg:w-auto h-auto max-h-[20vh] lg:max-h-[23vh] object-contain"
                   />
                 ) : (
@@ -63,7 +61,7 @@ const Lab: React.FC = () => {
         </div>
       </main>
 
-      {/* === MODAL OVERLAY (Unchanged) === */}
+      {/* === MODAL OVERLAY === */}
       <AnimatePresence>
         {selected && (
           <>

@@ -76,7 +76,7 @@ export const PROJECTS: ProjectData[] = [
       introText: "My first professional experience. Placed in the the Bureau of Goods and Services Procurement.",
       sideImage: "/wjdmfull.webp",
       sideText: "West Java's procurement landscape had a fragmentation problem. General users which spans over a wide range of age group, had to navigate up to five separate websites just to complete a process. This led to recurring issues, such as UMKM Owners registering in the wrong regional marketplace or misinformation. WJDM was the proposed answer, a single, integrated platform built specifically for the West Java region.",
-      phases: ["Requested to build a full web system", "Agreed to focus on a high-fidelity prototype", "research & legal context", "Concepting & prototyping", "Incremental builds with feedback loops", "Final prototype presented to head of bureau", "Roadmap feature built & signed off"],
+      phases: ["Requested to build a full web system", "Agreed to focus on a high-fidelity prototype", "Research & legal context", "Concepting & prototyping", "Incremental builds with feedback loops", "Final prototype presented to head of bureau", "Roadmap feature built & signed off"],
       narrative: "Working inside a government environment as a college student back then was its own kind of learning. Most colleagues were of different generations, much higher position and more experienced than myself, some workflows were still manual, and the pace was different from anything academic. Adapting to that and still delivering something that got approved is something I carry forward."
     }
   },
@@ -111,7 +111,7 @@ export const PROJECTS: ProjectData[] = [
       description: "Website development for the staff management and staff attendance module at The Room 19 Library Bandung.",
       role: "Full-Stack Developer",
       year: "2025",
-      tags: ["React", "Node.js", "Tailwind CSS"], // Add your actual tech stack here
+      tags: ["React", "Next.js", "JavaScript", "PostgreSQL"],
       introText: "A comprehensive internal tool to streamline staff operations.",
       sideImages: [
         "/tr1.webp", 
@@ -122,15 +122,15 @@ export const PROJECTS: ProjectData[] = [
       sideText: "The Room 19 needed a dedicated platform to handle internal logistics. The challenge was creating a system that served two very different user groups: the administrators managing the operations, and the staff logging their daily activities.",
       roleFlows: [
         {
-          role: "Admin Dashboard",
-          features: "Manage staff accounts, assign shifts, oversee attendance, and export monthly reports."
+          role: "Admin",
+          features: "dashboard, manage staff, assign shifts, oversee attendance."
         },
         {
-          role: "Staff Portal",
-          features: "Daily clock-in/out, view personal attendance history, and request time off."
+          role: "Staff",
+          features: "dashboard, daily clock-in/out, attendance history, quick check-in."
         }
       ],
-      narrative: "Structuring the database to handle these distinct permission levels was a great exercise in security and role-based access control. The final product replaced their manual tracking methods entirely."
+      narrative: "Structuring the database to handle these distinct permission levels was a great exercise in security and role-based access control."
       
     }
     

@@ -44,9 +44,8 @@ const Projects: React.FC = () => {
           onMouseEnter: () => setHoveredText(hoverLabel),
           onMouseLeave: () => setHoveredText(null),
         };
-
-    // iOS-style spring entrance: fade + subtle rise + gentle bounce
-    const entranceVariants = {
+        
+        const entranceVariants = {
       hidden: {
         opacity: 0,
         y: -24,
@@ -138,7 +137,7 @@ const Projects: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Floating Hover Text — mouse/desktop only */}
+      {/* Floating Hover Text*/}
       {!isTouchDevice.current && (
         <div className="fixed top-0 left-0 pointer-events-none z-[100]">
           <AnimatePresence>

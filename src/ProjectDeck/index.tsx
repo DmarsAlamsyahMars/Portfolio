@@ -23,19 +23,14 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
   const targetScroll = useRef(3.5);
   const [ready, setReady] = useState(false);
 
-  // Camera/hover drag state — delayed 150ms like before
   const isDragging = useRef(false);
   const isPointerDown = useRef(false);
   const dragTimer = useRef<number | null>(null);
   const lastY = useRef(0);
   const startY = useRef(0);
 
-  // Separate: cumulative movement tracker for click suppression
-  // This is the key addition — it accumulates total px moved, never resets mid-drag
   const totalMovement = useRef(0);
 
-  // CLICK_SUPPRESS_THRESHOLD: how many total pixels of movement = "this was a drag, not a click"
-  // 6px is tight enough to allow intentional clicks, loose enough to catch slow drags
   const CLICK_SUPPRESS_THRESHOLD = 6;
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -46,7 +41,7 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
     isPointerDown.current = true;
     lastY.current = e.clientY;
     startY.current = e.clientY;
-    totalMovement.current = 0; // reset accumulator for new gesture
+    totalMovement.current = 0;
 
     dragTimer.current = setTimeout(() => {
       if (isPointerDown.current) {
@@ -59,15 +54,13 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
     if (!isPointerDown.current) return;
 
     const deltaY = e.clientY - lastY.current;
-    totalMovement.current += Math.abs(deltaY); // accumulate — no negatives cancel positives
+    totalMovement.current += Math.abs(deltaY);
 
-    // Fast movement: immediately enter drag state (existing behaviour)
     if (!isDragging.current && Math.abs(e.clientY - startY.current) > 10) {
       if (dragTimer.current) clearTimeout(dragTimer.current);
       isDragging.current = true;
     }
 
-    // Slow movement: enter drag state once threshold is crossed
     if (!isDragging.current && totalMovement.current > CLICK_SUPPRESS_THRESHOLD) {
       if (dragTimer.current) clearTimeout(dragTimer.current);
       isDragging.current = true;
@@ -83,12 +76,8 @@ const ProjectDeck: React.FC<ProjectDeckProps> = ({ onCardClick }) => {
     if (dragTimer.current) clearTimeout(dragTimer.current);
     isPointerDown.current = false;
     isDragging.current = false;
-    // Note: totalMovement is NOT reset here — it's read by cards during the click
-    // event which fires synchronously after pointerup. Reset happens on next pointerdown.
   };
 
-  // Wrap onCardClick to gate on totalMovement
-  // Cards call this instead of onCardClick directly
   const handleCardClick = (tab: string) => {
     if (totalMovement.current > CLICK_SUPPRESS_THRESHOLD) return;
     onCardClick?.(tab);

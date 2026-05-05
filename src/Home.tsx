@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import ProjectDeck from './ProjectDeck';
 
-// 1. MARSLINK COMPONENT
 const MarsLink = () => {
   return (
     <span className="text-cool-900 inline-flex items-center gap-2">
@@ -29,7 +28,6 @@ const MarsLink = () => {
   );
 };
 
-// 2. INTERACTIVE ICON COMPONENT
 const InteractiveIcon = () => {
   const icons = ['/emo1.webp', '/emo2.webp', '/emo3.webp', '/emo4.webp'];
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -78,22 +76,18 @@ const InteractiveIcon = () => {
   );
 };
 
-// 3. EYE TRACKER COMPONENT
 const EyeTracker = () => {
   const [isClicking, setIsClicking] = useState(false);
   const pupilRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    // Updated to handle both Mouse and Touch events
     const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!pupilRef.current) return;
 
       let clientX = 0;
       let clientY = 0;
 
-      // Check if it's a touch event or a mouse event
       if ('touches' in e) {
-        // Grab the coordinates of the first finger touching the screen
         clientX = e.touches[0].clientX;
         clientY = e.touches[0].clientY;
       } else {
@@ -107,10 +101,8 @@ const EyeTracker = () => {
       pupilRef.current.style.transform = `translate(${moveX}px, ${moveY}px)`;
     };
 
-    // Listen for mouse movement (Desktop)
     window.addEventListener('mousemove', handleMove);
     
-    // Listen for finger dragging and initial taps (Mobile)
     window.addEventListener('touchmove', handleMove);
     window.addEventListener('touchstart', handleMove);
 
@@ -119,7 +111,7 @@ const EyeTracker = () => {
       window.removeEventListener('touchmove', handleMove);
       window.removeEventListener('touchstart', handleMove);
     };
-  }, []); // Empty dependency array ensures this only runs once on mount
+  }, []);
 
   const handleClick = () => {
     setIsClicking(true);

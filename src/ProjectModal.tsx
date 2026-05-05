@@ -7,9 +7,7 @@ interface ProjectModalProps {
   onClose: () => void;
 }
 
-// THE KOWALSKI SPRING: Snappy, premium entrance.
 const springEntrance = { type: "spring", stiffness: 400, damping: 30, mass: 0.8 } as const;
-// FAST EXIT: No lingering, immediately gets out of the user's way.
 const fastExit = { duration: 0.15, ease: "easeOut" } as const;
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
@@ -17,8 +15,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     const scrollY = window.scrollY;
 
-    // iOS Safari requires position:fixed to truly prevent scroll-behind on mobile.
-    // We also store scrollY so we can restore scroll position on close.
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = `${scrollbarWidth}px`;
     document.body.style.position = 'fixed';
@@ -31,7 +27,6 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
-      // Restore scroll position after un-fixing the body
       window.scrollTo(0, scrollY);
     };
   }, []);
@@ -41,7 +36,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
       
-      {/* BACKGROUND OVERLAY: Apple-style glassmorphism blur */}
+      {/* BACKGROUND OVERLAY*/}
       <motion.div
         initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
         animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
@@ -50,7 +45,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
         onClick={onClose}
       />
 
-      {/* MODAL CONTAINER: Classic center scale-up */}
+      {/* MODAL CONTAINER */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0, transition: springEntrance }}
@@ -130,11 +125,11 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                       
                       {/* Legacy: Single Side Image */}
                       {content.sideImage && (
-                        <div className="w-full h-full rounded-none overflow-hidden bg-cool-200 min-h-[50vh]">
+                        <div className="w-full rounded-none overflow-hidden bg-cool-200">
                           <img 
                             src={content.sideImage} 
                             alt={`${project.title} detail`} 
-                            className="w-full h-full object-cover object-top"
+                            className="w-full h-auto object-cover"
                           />
                         </div>
                       )}

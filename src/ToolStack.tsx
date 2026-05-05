@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-// 1. The Data (Text-based, no emojis)
 const tools = [
   { id: 'react', name: 'React', isFavorite: true },
   { id: 'typescript', name: 'typescript', isFavorite: true },
@@ -21,7 +20,6 @@ const ToolStack: React.FC = () => {
   const isLoveTab = activeTab === 'love';
 
   return (
-    // The container uses relative positioning to anchor the SVG border
     <div className="relative w-full p-3 mb-6 font-sans">
       
       {/* 2. The Custom Stripe Border */}
@@ -31,15 +29,15 @@ const ToolStack: React.FC = () => {
           y="1" 
           width="calc(100% - 2px)" 
           height="calc(100% - 2px)" 
-          rx="0" /* Matches Tailwind's rounded-xl */
+          rx="0"
           fill="none" 
-          stroke="#cbd5e1" /* Tailwind's slate-300 color (dusty blue/grey) */
+          stroke="#cbd5e1"
           strokeWidth="1" 
-          strokeDasharray="3 2" /* The Magic Numbers: 16px lines, 8px gaps */
+          strokeDasharray="3 2"
         />
       </svg>
 
-      {/* Wrapping content in relative z-10 so it sits above the SVG border */}
+      {/* Wrapping content in relative z-10 */}
       <div className="relative z-10">
         
         {/* 3. Header & Toggle Inline */}
@@ -74,10 +72,9 @@ const ToolStack: React.FC = () => {
           </div>
         </div>
 
-        {/* 4. Dynamic Interactive Grid (No Layout Shifts) */}
+        {/* 4. Dynamic Interactive Grid*/}
         <div className="flex flex-wrap content-start gap-2">
           {tools.map((tool) => {
-            // Determine the state for this specific tool based on the active tab
             const isFaded = isLoveTab && !tool.isFavorite;
             const isHighlighted = isLoveTab && tool.isFavorite;
 
@@ -85,21 +82,19 @@ const ToolStack: React.FC = () => {
               <motion.div
                 key={tool.id}
                 layout
-                // Animate properties based on whether it should be highlighted or faded
                 animate={{ 
-                  opacity: isFaded ? 0.3 : 1, // Dim non-favorites to 30% opacity
-                  scale: isHighlighted ? 1.05 : 1, // Slightly enlarge favorites
-                  y: isHighlighted ? -2 : 0, // Nudge favorites up slightly
+                  opacity: isFaded ? 0.3 : 1,
+                  scale: isHighlighted ? 1.05 : 1,
+                  y: isHighlighted ? -2 : 0,
                   boxShadow: isHighlighted 
-                    ? "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)" // Tailwind shadow-md
-                    : "0 0px 0px 0px rgb(0 0 0 / 0)" // No shadow
+                    ? "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+                    : "0 0px 0px 0px rgb(0 0 0 / 0)"
                 }}
                 transition={{ 
                   type: 'spring', 
                   stiffness: 400, 
                   damping: 25 
                 }}
-                // Minimalist tag styling
                 className={`px-2.5 py-1 bg-slate-50 border border-slate-200 text-slate-600 text-[11px] font-medium rounded-md lowercase tracking-wide transition-colors duration-300 ${
                   isHighlighted ? 'bg-white border-slate-300 z-10 relative' : ''
                 }`}

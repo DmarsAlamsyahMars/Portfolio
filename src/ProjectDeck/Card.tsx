@@ -1,4 +1,3 @@
-// src/ProjectDeck/Card.tsx
 import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float, Html, useTexture } from '@react-three/drei';

@@ -81,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
           {/* Resume */}
           <a
-            href="currentcv.pdf"
+            href="resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="h-11 w-full md:w-auto px-8 flex items-center justify-center bg-white border border-cool-200 hover:border-cool-300 text-cool-900 rounded-full transition-all duration-200 hover:shadow-sm font-medium text-sm"
@@ -92,18 +92,6 @@ const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
       </div>
 
       {/* --- Navbar --- */}
-      {/*
-        KEY FIXES for small screens:
-        1. Replaced `w-[calc(100%-2rem)] max-w-max` with `mx-4` so the pill
-           never tries to be "full width" while also being "content width" — 
-           those two constraints fight each other on narrow viewports.
-        2. Added `overflow-hidden` on the nav so the active highlight is always
-           clipped cleanly inside the pill instead of bleeding out the left edge.
-        3. Switched button padding to `px-3 sm:px-4` so items compress
-           gracefully on small screens without wrapping or clipping.
-        4. Added `min-w-0` + `flex-shrink` awareness via `flex-1 justify-center`
-           on the button text so nothing overflows.
-      */}
       <div className="fixed bottom-6 left-0 right-0 z-[70] flex justify-center px-4">
         <nav className="font-sans flex items-center justify-center gap-0.5 p-1 bg-cool-100/80 backdrop-blur-md border border-cool-200 rounded-lg shadow-sm overflow-hidden">
           {navItems.map((item) => (

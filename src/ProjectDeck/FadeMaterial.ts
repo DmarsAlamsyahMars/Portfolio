@@ -1,4 +1,3 @@
-// src/components/ProjectDeck/FadeMaterial.ts
 import * as THREE from 'three';
 import { shaderMaterial } from '@react-three/drei';
 import { extend } from '@react-three/fiber';

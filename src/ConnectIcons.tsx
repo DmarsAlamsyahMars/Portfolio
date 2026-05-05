@@ -21,16 +21,13 @@ const ConnectIcons: React.FC = () => {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            // Added rotate: 6 for that subtle tilt!
             whileHover={{ scale: 1.15, y: -2, rotate: 6 }}
             whileTap={{ scale: 0.95 }}
-            // Stripped out all the bg, border, and rounded-full classes
             className="group flex items-center justify-center cursor-pointer"
           >
             <img 
               src={social.imgSrc} 
               alt={social.name}
-              // Increased size slightly to w-6 h-6 so they don't look lost without the circle
               className="w-6 h-6 object-contain grayscale opacity-70 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100" 
             />
           </motion.a>

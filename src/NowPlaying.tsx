@@ -13,13 +13,10 @@ const NowPlaying: React.FC = () => {
   const [isSwapping, setIsSwapping] = useState(false);
 
   const handleSwapSong = () => {
-    // Prevent spam-clicking while the animation is already happening
     if (isSwapping) return;
 
-    // 1. Trigger the slide-in animation
     setIsSwapping(true);
 
-    // 2. Wait for it to slide in (400ms), change the song, and let it pop back out
     setTimeout(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % playlist.length);
       setIsSwapping(false);
@@ -29,15 +26,14 @@ const NowPlaying: React.FC = () => {
   return (
     <div 
       onClick={handleSwapSong}
-      // Removed the scale up/down button effect, kept it simple
-      className="group relative flex items-center w-[300px] h-48 font-sans cursor-pointer scale-[0.6] origin-top-left"
+      className="group relative flex items-center w-[300px] h-48 font-sans cursor-pointer scale-[0.6] origin-top-left overflow-visible ml-6 lg:ml-0"
     >
       {/* SPINNING VINYL */}
       <div 
         className={`absolute left-0 w-48 h-48 rounded-full z-0 overflow-hidden shadow-xl shadow-black/5 transition-transform ${
           isSwapping 
-            ? "translate-x-0 duration-400 ease-in" // Slides entirely behind the album cover
-            : "translate-x-24 duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]" // Pops out halfway with a subtle bounce
+            ? "translate-x-0 duration-400 ease-in"
+            : "translate-x-24 duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
         }`}
       >
         <div className="relative w-full h-full animate-[spin_7s_linear_infinite]">
@@ -54,7 +50,7 @@ const NowPlaying: React.FC = () => {
         </div>
       </div>
 
-      {/* ALBUM COVER (On Top) */}
+      {/* ALBUM COVER*/}
       <div className="relative z-10 w-48 h-48 bg-zinc-200 shadow-2xl shadow-black/40 overflow-hidden rounded-sm">
         
         {/* Album Images - Crossfading */}
@@ -72,7 +68,7 @@ const NowPlaying: React.FC = () => {
         {/* Dark gradient overlay at the bottom half */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 pointer-events-none"></div>
 
-        {/* Track Title and Artist (Bottom Right) - Now Mapped for Crossfading */}
+        {/* Track Title and Artist */}
         {playlist.map((track, index) => (
           <div 
             key={`text-${track.album}`}

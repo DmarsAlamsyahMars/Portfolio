@@ -1,4 +1,3 @@
-// src/components/ProjectDeck/config.ts
 export const CARD_SIZE = [3, 4]; 
 export const CARD_THICKNESS = 0.07; 
 export const CARD_SPACING = 2.2;
